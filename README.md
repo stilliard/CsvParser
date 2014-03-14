@@ -1,8 +1,12 @@
 
-[![Build Status](https://travis-ci.org/stilliard/CsvParser.png?branch=master)](https://travis-ci.org/stilliard/CsvParser)
-
 # Csv Parser
 Quickly take in and output csv formats.
+
+[![Build Status](https://travis-ci.org/stilliard/CsvParser.png?branch=master)](https://travis-ci.org/stilliard/CsvParser)
+[![Coverage Status](https://coveralls.io/repos/stilliard/CsvParser/badge.png)](https://coveralls.io/r/stilliard/CsvParser)
+
+[![Latest Stable Version](https://poser.pugx.org/stilliard/csvparser/v/stable.png)](https://packagist.org/packages/stilliard/csvparser) [![Total Downloads](https://poser.pugx.org/stilliard/csvparser/downloads.png)](https://packagist.org/packages/stilliard/csvparser) [![Latest Unstable Version](https://poser.pugx.org/stilliard/csvparser/v/unstable.png)](https://packagist.org/packages/stilliard/csvparser) [![License](https://poser.pugx.org/stilliard/csvparser/license.png)](https://packagist.org/packages/stilliard/csvparser)
+
 
 ## Example usage:
 ```php
