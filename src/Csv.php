@@ -46,17 +46,22 @@ class Csv
         }
     }
 
-    public function addColumn($column)
-    {
-        // TODO
-    }
-
     public function mapRows($callback)
     {
-        // TODO
+        $this->data = array_map($callback, $this->data);
     }
 
     public function filterRows($callback)
+    {
+        $this->data = array_filter($this->data, $callback);
+    }
+
+    public function addColumn($column, $default='')
+    {
+        // TODO
+    }
+
+    public function removeColumn($column)
     {
         // TODO
     }

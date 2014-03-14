@@ -46,17 +46,21 @@ $csv->mapColumn('name', function ($name) {
     return trim($name);
 });
 
-// add a column
-$csv->addColumn('codename');
-
 // map function over rows
 $csv->mapRows(function ($row) {
-    $row->codename = base64_encode($row->id);
+    $row['codename'] = base64_encode($row['id']);
+    return $row;
 });
+
+// add a column
+$csv->addColumn('codename', 'default value');
+
+// remove a column
+$csv->removeColumn('codename');
 
 // filter down rows
 $csv->filterRows(function ($row) {
-    return $row->id !== '#'; // remove rows where the id column just has a hash inside
+    return $row['id'] != '#'; // remove rows where the id column just has a hash inside
 });
 
 // remove row by index

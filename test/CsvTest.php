@@ -69,4 +69,25 @@ class CsvTest extends PHPUnit_Framework_TestCase
         $expected = [['id'=>1, 'name'=>'Sir Bob'],['id'=>2, 'name'=>'Sir Bill']];
         $this->assertEquals($expected, $actual);
     }
+
+    public function testMapRows()
+    {
+        $this->csv->mapRows(function ($row) {
+            $row['codename'] = base64_encode($row['id']);
+            return $row;
+        });
+        $actual = $this->parser->toArray($this->csv);
+        $expected = [['id'=>1, 'name'=>'Bob','codename'=>'MQ=='],['id'=>2, 'name'=>'Bill','codename'=>'Mg==']];
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testFilterRows()
+    {
+        $this->csv->filterRows(function ($row) {
+            return $row['id'] != 2;
+        });
+        $actual = $this->parser->toArray($this->csv);
+        $expected = [['id'=>1, 'name'=>'Bob']];
+        $this->assertEquals($expected, $actual);
+    }
 }
