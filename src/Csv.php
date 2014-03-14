@@ -31,9 +31,19 @@ class Csv
         $this->data[] = $row;
     }
 
+    public function columnExists($column)
+    {
+        return isset($this->data[0][$column]);
+    }
+
     public function mapColumns($column, $callback)
     {
-        // TODO
+        if ( ! $this->columnExists($column)) {
+            throw new Exception('Column does not exist');
+        }
+        foreach ($this->data as $i => $line) {
+            $this->data[$i][$col] = $callback($line[$col]);
+        }
     }
 
     public function addColumn($column)
