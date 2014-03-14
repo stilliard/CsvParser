@@ -2,7 +2,7 @@
 
 namespace CsvParser\Writer;
 
-class ChunksWriter extends AbstractWriter
+class ChunksWriter implements WriterInterface
 {
     public static function write(\CsvParser\Parser $parser, \CsvParser\Csv $csv, $size)
     {

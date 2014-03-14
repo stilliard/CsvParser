@@ -2,7 +2,7 @@
 
 namespace CsvParser\Reader;
 
-class FileReader extends AbstractReader
+class FileReader implements ReaderInterface
 {
     public static function read(\CsvParser\Parser $parser, $file)
     {

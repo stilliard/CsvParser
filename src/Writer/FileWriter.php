@@ -2,7 +2,7 @@
 
 namespace CsvParser\Writer;
 
-class FileWriter extends AbstractWriter
+class FileWriter implements WriterInterface
 {
     public static function write(\CsvParser\Parser $parser, \CsvParser\Csv $csv)
     {
