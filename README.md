@@ -41,8 +41,8 @@ $csv->appendRow(['id'=>3, 'name'=>'Ben']);
 $csv->prependRow(['id'=>4, 'name'=>'Barry']);
 
 // map function over column
-$csv->mapColumns('name', 'trim');
-$csv->mapColumns('name', function ($name) {
+$csv->mapColumn('name', 'trim');
+$csv->mapColumn('name', function ($name) {
     return trim($name);
 });
 

@@ -36,13 +36,13 @@ class Csv
         return isset($this->data[0][$column]);
     }
 
-    public function mapColumns($column, $callback)
+    public function mapColumn($column, $callback)
     {
         if ( ! $this->columnExists($column)) {
             throw new Exception('Column does not exist');
         }
-        foreach ($this->data as $i => $line) {
-            $this->data[$i][$col] = $callback($line[$col]);
+        foreach ($this->data as $i => $row) {
+            $this->data[$i][$column] = $callback($row[$column]);
         }
     }
 
