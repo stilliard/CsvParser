@@ -1,4 +1,6 @@
 
+[![Build Status](https://travis-ci.org/stilliard/CsvParser.png?branch=master)](https://travis-ci.org/stilliard/CsvParser)
+
 # Csv Parser
 Quickly take in and output csv formats.
 
