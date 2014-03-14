@@ -7,6 +7,7 @@ class StringReader implements ReaderInterface
     public static function read(\CsvParser\Parser $parser, $string)
     {
         $data = [];
+        $headings = [];
         $lines = explode($parser->lineDelimiter, $string);
         foreach ($lines as $i => $line) {
             if ($line==='') {
