@@ -23,7 +23,7 @@ class Csv
 
     public function appendRow($row)
     {
-        $this->data = [$row] + $this->data;
+        array_unshift($this->data, $row);
     }
 
     public function prependRow($row)
