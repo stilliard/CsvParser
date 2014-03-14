@@ -50,9 +50,9 @@ class Parser
         return Writer\ArrayWriter::write($this, $csv);
     }
 
-    public function toFile(Csv $csv)
+    public function toFile(Csv $csv, $filename)
     {
-        return Writer\FileWriter::write($this, $csv);
+        return Writer\FileWriter::write($this, $csv, $filename);
     }
 
     /* Special writers */

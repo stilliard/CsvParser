@@ -4,9 +4,9 @@ namespace CsvParser\Writer;
 
 class FileWriter implements WriterInterface
 {
-    public static function write(\CsvParser\Parser $parser, \CsvParser\Csv $csv)
+    public static function write(\CsvParser\Parser $parser, \CsvParser\Csv $csv, $filename)
     {
         $file = $parser->toString($csv);
-        return file_put_contents($file);
+        return file_put_contents($filename, $file);
     }
 }
