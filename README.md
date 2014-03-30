@@ -7,6 +7,10 @@ Quickly take in and output csv formats.
 [![Code Coverage](https://scrutinizer-ci.com/g/stilliard/CsvParser/badges/coverage.png?s=dbc9d91b767b84a1a649b5695b8a3cdce690684a)](https://scrutinizer-ci.com/g/stilliard/CsvParser/)
 [![Latest Stable Version](https://poser.pugx.org/stilliard/csvparser/v/stable.png)](https://packagist.org/packages/stilliard/csvparser) [![Total Downloads](https://poser.pugx.org/stilliard/csvparser/downloads.png)](https://packagist.org/packages/stilliard/csvparser) [![Latest Unstable Version](https://poser.pugx.org/stilliard/csvparser/v/unstable.png)](https://packagist.org/packages/stilliard/csvparser) [![License](https://poser.pugx.org/stilliard/csvparser/license.png)](https://packagist.org/packages/stilliard/csvparser)
 
+## Install
+```bash
+composer require stilliard/csvparser dev-master
+```
 
 ## Example usage:
 ```php
