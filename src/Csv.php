@@ -100,4 +100,14 @@ class Csv
     {
         // TODO
     }
+
+    public function reorderRowsByColumn($column, $type='asc')
+    {
+        // TODO
+    }
+
+    public function reorderRowsByColumns($columns)
+    {
+        // TODO
+    }
 }

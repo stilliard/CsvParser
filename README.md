@@ -87,6 +87,11 @@ $csv->reorderRow('id', 22, 0);
 // or move id 22 to the start, and id 5 after it
 $csv->reorderRows('id', [22 => 0, 5 => 1]);
 
+// Sort rows by a column
+$csv->reorderRowsByColumn('id', 'desc');
+// or even multiples:
+$csv->reorderRowsByColumns(['name', 'id' => 'desc']);
+
 // Output
 var_dump($parser->toArray($csv));
 var_dump($parser->toString($csv));
