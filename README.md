@@ -22,7 +22,9 @@ $array = [['id'=>1, 'name'=>'Bob'],['id'=>2, 'name'=>'Bill']];
 $parser = new \CsvParser\Parser();
 $csv = $parser->fromArray($array);
 var_dump($parser->toString($csv));
+```
 
+```php
 //
 // Full power examples:
 //
