@@ -8,7 +8,7 @@ class ChunksWriter implements WriterInterface
     {
         $data = $csv->getData();
         $chunks = array_chunk($data, $size, true);
-        $end = [];
+        $end = array();
         foreach ($chunks as $chunk) {
             $end[] = new \CsvParser\Csv($chunk);
         }

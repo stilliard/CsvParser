@@ -6,8 +6,8 @@ class StringReader implements ReaderInterface
 {
     public static function read(\CsvParser\Parser $parser, $string)
     {
-        $data = [];
-        $headings = [];
+        $data = array();
+        $headings = array();
         $lines = explode($parser->lineDelimiter, $string);
         foreach ($lines as $i => $line) {
             if ($line==='') {
@@ -19,7 +19,7 @@ class StringReader implements ReaderInterface
                 $headings = $fields;
             }
             else {
-                $data[$i-1] = [];
+                $data[$i-1] = array();
                 foreach ($headings as $j => $heading) {
                     $data[$i-1][$heading] = $fields[$j];
                 }
