@@ -11,13 +11,13 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $csv = $parser->fromString($string);
         $actual = $parser->toArray($csv);
         
-        $expected = [['id'=>1, 'name'=>'Bob'],['id'=>2, 'name'=>'Bill']];
+        $expected = array(array('id'=>1, 'name'=>'Bob'),array('id'=>2, 'name'=>'Bill'));
         $this->assertEquals($expected, $actual);
     }
     
     public function testFromArrayToStringSimple()
     {
-        $array = [['id'=>1, 'name'=>'Bob'],['id'=>2, 'name'=>'Bill']];
+        $array = array(array('id'=>1, 'name'=>'Bob'),array('id'=>2, 'name'=>'Bill'));
         $parser = new \CsvParser\Parser();
         $csv = $parser->fromArray($array);
         $actual = $parser->toString($csv);
