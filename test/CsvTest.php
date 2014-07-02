@@ -14,12 +14,12 @@ class CsvTest extends PHPUnit_Framework_TestCase
     public function testAppendRow()
     {
         $actual = $this->parser->toArray($this->csv);
-        $expected = [['id'=>1, 'name'=>'Bob'],['id'=>2, 'name'=>'Bill']];
+        $expected = array(array('id'=>1, 'name'=>'Bob'),array('id'=>2, 'name'=>'Bill'));
         $this->assertEquals($expected, $actual);
 
-        $this->csv->appendRow(['id'=>3, 'name'=>'Ben']);
+        $this->csv->appendRow(array('id'=>3, 'name'=>'Ben'));
         $actual = $this->parser->toArray($this->csv);
-        $expected = [['id'=>3, 'name'=>'Ben'],['id'=>1, 'name'=>'Bob'],['id'=>2, 'name'=>'Bill']];
+        $expected = array(array('id'=>3, 'name'=>'Ben'),array('id'=>1, 'name'=>'Bob'),array('id'=>2, 'name'=>'Bill'));
         $this->assertEquals($expected, $actual);
     }
 
@@ -29,9 +29,9 @@ class CsvTest extends PHPUnit_Framework_TestCase
         $this->parser = new \CsvParser\Parser();
         $this->csv = $this->parser->fromString($this->string);
 
-        $this->csv->prependRow(['id'=>3, 'name'=>'Ben']);
+        $this->csv->prependRow(array('id'=>3, 'name'=>'Ben'));
         $actual = $this->parser->toArray($this->csv);
-        $expected = [['id'=>1, 'name'=>'Bob'],['id'=>2, 'name'=>'Bill'],['id'=>3, 'name'=>'Ben']];
+        $expected = array(array('id'=>1, 'name'=>'Bob'),array('id'=>2, 'name'=>'Bill'),array('id'=>3, 'name'=>'Ben'));
         $this->assertEquals($expected, $actual);
     }
 
@@ -43,10 +43,10 @@ class CsvTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(2, $this->csv->getRowCount());
 
-        $this->csv->appendRow(['id'=>3, 'name'=>'Ben']);
+        $this->csv->appendRow(array('id'=>3, 'name'=>'Ben'));
         $this->assertEquals(3, $this->csv->getRowCount());
 
-        $this->csv->prependRow(['id'=>77, 'name'=>'Benji']);
+        $this->csv->prependRow(array('id'=>77, 'name'=>'Benji'));
         $this->assertEquals(4, $this->csv->getRowCount());
     }
 
@@ -66,7 +66,7 @@ class CsvTest extends PHPUnit_Framework_TestCase
             return 'Sir ' . $val;
         });
         $actual = $this->parser->toArray($this->csv);
-        $expected = [['id'=>1, 'name'=>'Sir Bob'],['id'=>2, 'name'=>'Sir Bill']];
+        $expected = array(array('id'=>1, 'name'=>'Sir Bob'),array('id'=>2, 'name'=>'Sir Bill'));
         $this->assertEquals($expected, $actual);
     }
 
@@ -77,7 +77,7 @@ class CsvTest extends PHPUnit_Framework_TestCase
             return $row;
         });
         $actual = $this->parser->toArray($this->csv);
-        $expected = [['id'=>1, 'name'=>'Bob','codename'=>'MQ=='],['id'=>2, 'name'=>'Bill','codename'=>'Mg==']];
+        $expected = array(array('id'=>1, 'name'=>'Bob','codename'=>'MQ=='),array('id'=>2, 'name'=>'Bill','codename'=>'Mg=='));
         $this->assertEquals($expected, $actual);
     }
 
@@ -87,7 +87,7 @@ class CsvTest extends PHPUnit_Framework_TestCase
             return $row['id'] != 2;
         });
         $actual = $this->parser->toArray($this->csv);
-        $expected = [['id'=>1, 'name'=>'Bob']];
+        $expected = array(array('id'=>1, 'name'=>'Bob'));
         $this->assertEquals($expected, $actual);
     }
 }
