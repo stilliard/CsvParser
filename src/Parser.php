@@ -10,13 +10,13 @@ class Parser
 
     public function __construct($fieldDelimiter = null, $fieldEnclosure = null, $lineDelimiter = null)
     {
-        if ($fieldDelimiter) {
+        if ( ! is_null($fieldDelimiter)) {
             $this->fieldDelimiter = $fieldDelimiter;
         }
-        if ($fieldEnclosure) {
+        if ( ! is_null($fieldEnclosure)) {
             $this->fieldEnclosure = $fieldEnclosure;
         }
-        if ($lineDelimiter) {
+        if ( ! is_null($lineDelimiter)) {
             $this->lineDelimiter = $lineDelimiter;
         }
     }
