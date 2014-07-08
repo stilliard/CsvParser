@@ -73,6 +73,52 @@ air, moon roof, loaded',
             ),
         );
         $this->assertEquals($expected, $actual);
+
+        //
+        // trying a different text delim
+        //
+        $string = "Year\tMake\tModel\tDescription\tPrice
+1997\tFord\tE350\t'ac, abs, moon'\t3000.00
+1999\tChevy\t'Venture ''Extended Edition'''\t''\t4900.00
+1999\tChevy\t'Venture ''Extended Edition, Very Large'''\t\t5000.00
+1996\tJeep\tGrand Cherokee\t'MUST SELL!
+air, moon roof, loaded'\t4799.00";
+        $parser = new \CsvParser\Parser("\t", "'");
+        $csv = $parser->fromString($string);
+        $actual = $parser->toArray($csv);
+        
+        $expected = array(
+            array(
+                'Year' => '1997',
+                'Make' => 'Ford',
+                'Model' => 'E350',
+                'Description' => 'ac, abs, moon',
+                'Price' => '3000.00',
+            ),
+            array(
+                'Year' => '1999',
+                'Make' => 'Chevy',
+                'Model' => "Venture 'Extended Edition'",
+                'Description' => '',
+                'Price' => '4900.00',
+            ),
+            array(
+                'Year' => '1999',
+                'Make' => 'Chevy',
+                'Model' => "Venture 'Extended Edition, Very Large'",
+                'Description' => '',
+                'Price' => '5000.00',
+            ),
+            array(
+                'Year' => '1996',
+                'Make' => 'Jeep',
+                'Model' => 'Grand Cherokee',
+                'Description' => 'MUST SELL!
+air, moon roof, loaded',
+                'Price' => '4799.00',
+            ),
+        );
+        $this->assertEquals($expected, $actual);
     }
 
     // example from http://en.wikipedia.org/wiki/Comma-separated_values
@@ -114,12 +160,60 @@ air, moon roof, loaded',
         $csv = $parser->fromArray($array);
         $actual = $parser->toString($csv);
 
+        //
+        // trying a different text delim
+        //
         $expected = '"Year","Make","Model","Description","Price"
 "1997","Ford","E350","ac, abs, moon","3000.00"
 "1999","Chevy","Venture ""Extended Edition""","","4900.00"
 "1999","Chevy","Venture ""Extended Edition, Very Large""","","5000.00"
 "1996","Jeep","Grand Cherokee","MUST SELL!
 air, moon roof, loaded","4799.00"';
+
+        $array = array(
+            array(
+                'Year' => '1997',
+                'Make' => 'Ford',
+                'Model' => 'E350',
+                'Description' => 'ac, abs, moon',
+                'Price' => '3000.00',
+            ),
+            array(
+                'Year' => '1999',
+                'Make' => 'Chevy',
+                'Model' => "Venture 'Extended Edition'",
+                'Description' => '',
+                'Price' => '4900.00',
+            ),
+            array(
+                'Year' => '1999',
+                'Make' => 'Chevy',
+                'Model' => "Venture 'Extended Edition, Very Large'",
+                'Description' => '',
+                'Price' => '5000.00',
+            ),
+            array(
+                'Year' => '1996',
+                'Make' => 'Jeep',
+                'Model' => 'Grand Cherokee',
+                'Description' => 'MUST SELL!
+air, moon roof, loaded',
+                'Price' => '4799.00',
+            ),
+        );
+        
+        $this->assertEquals($expected, $actual);
+
+        $parser = new \CsvParser\Parser("\t", "'");
+        $csv = $parser->fromArray($array);
+        $actual = $parser->toString($csv);
+
+        $expected = "'Year'\t'Make'\t'Model'\t'Description'\t'Price'
+'1997'\t'Ford'\t'E350'\t'ac, abs, moon'\t'3000.00'
+'1999'\t'Chevy'\t'Venture ''Extended Edition'''\t''\t'4900.00'
+'1999'\t'Chevy'\t'Venture ''Extended Edition, Very Large'''\t''\t'5000.00'
+'1996'\t'Jeep'\t'Grand Cherokee'\t'MUST SELL!
+air, moon roof, loaded'\t'4799.00'";
         
         $this->assertEquals($expected, $actual);
     }

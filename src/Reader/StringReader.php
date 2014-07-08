@@ -11,7 +11,7 @@ class StringReader implements ReaderInterface
 
         // split lines
         // regex from here: https://bugs.php.net/bug.php?id=55763
-        $lines = preg_split('/[\r\n]{1,2}(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))/', $string);
+        $lines = preg_split('/[\r\n]{1,2}(?=(?:[^'.$parser->fieldEnclosure.']*'.$parser->fieldEnclosure.'[^'.$parser->fieldEnclosure.']*'.$parser->fieldEnclosure.')*(?![^'.$parser->fieldEnclosure.']*'.$parser->fieldEnclosure.'))/', $string);
 
         foreach ($lines as $i => $line) {
             if ($line==='') {
