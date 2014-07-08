@@ -8,7 +8,11 @@ class StringReader implements ReaderInterface
     {
         $data = array();
         $headings = array();
-        $lines = explode($parser->lineDelimiter, $string);
+
+        // split lines
+        // regex from here: https://bugs.php.net/bug.php?id=55763
+        $lines = preg_split('/[\r\n]{1,2}(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))/', $string);
+
         foreach ($lines as $i => $line) {
             if ($line==='') {
                 continue; // blank line...
@@ -21,7 +25,8 @@ class StringReader implements ReaderInterface
             else {
                 $data[$i-1] = array();
                 foreach ($headings as $j => $heading) {
-                    $data[$i-1][$heading] = $fields[$j];
+                    $field = isset($fields[$j]) ? $fields[$j] : '';
+                    $data[$i-1][$heading] = $field;
                 }
             }
         }

@@ -27,4 +27,51 @@ class ParserTest extends PHPUnit_Framework_TestCase
 "2","Bill"';
         $this->assertEquals($expected, $actual);
     }
+
+    // example from http://en.wikipedia.org/wiki/Comma-separated_values
+    public function testFromStringToArraySubQuotes()
+    {
+        $string = 'Year,Make,Model,Description,Price
+1997,Ford,E350,"ac, abs, moon",3000.00
+1999,Chevy,"Venture ""Extended Edition""","",4900.00
+1999,Chevy,"Venture ""Extended Edition, Very Large""",,5000.00
+1996,Jeep,Grand Cherokee,"MUST SELL!
+air, moon roof, loaded",4799.00';
+        $parser = new \CsvParser\Parser();
+        $csv = $parser->fromString($string);
+        $actual = $parser->toArray($csv);
+        
+        $expected = array(
+            array(
+                'Year' => '1997',
+                'Make' => 'Ford',
+                'Model' => 'E350',
+                'Description' => 'ac, abs, moon',
+                'Price' => '3000.00',
+            ),
+            array(
+                'Year' => '1999',
+                'Make' => 'Chevy',
+                'Model' => 'Venture "Extended Edition"',
+                'Description' => '',
+                'Price' => '4900.00',
+            ),
+            array(
+                'Year' => '1999',
+                'Make' => 'Chevy',
+                'Model' => 'Venture "Extended Edition, Very Large"',
+                'Description' => '',
+                'Price' => '5000.00',
+            ),
+            array(
+                'Year' => '1996',
+                'Make' => 'Jeep',
+                'Model' => 'Grand Cherokee',
+                'Description' => 'MUST SELL!
+air, moon roof, loaded',
+                'Price' => '4799.00',
+            ),
+        );
+        $this->assertEquals($expected, $actual);
+    }
 }
