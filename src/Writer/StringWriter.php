@@ -10,13 +10,13 @@ class StringWriter implements WriterInterface
 
         $output = array(
             implode($parser->fieldDelimiter, array_map(function ($value) use ($parser) {
-                return $parser->fieldEnclosure . $value . $parser->fieldEnclosure;
+                return $parser->fieldEnclosure . str_replace('"', '""', $value) . $parser->fieldEnclosure;
             }, array_keys(current($data))))
         );
 
         foreach ($data as $line) {
             $output[] = implode($parser->fieldDelimiter, array_map(function ($value) use ($parser) {
-                return $parser->fieldEnclosure . $value . $parser->fieldEnclosure;
+                return $parser->fieldEnclosure . str_replace('"', '""', $value) . $parser->fieldEnclosure;
             }, $line));
         }
         
