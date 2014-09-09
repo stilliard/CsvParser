@@ -12,7 +12,7 @@ class FileWriterTest extends \PHPUnit_Framework_TestCase
 
     public function testWrite()
     {
-        $input = [[ 'a' => 1, 'b' => 2, 'c' => 44 ]];
+        $input = array(array( 'a' => 1, 'b' => 2, 'c' => 44 ));
         $tmpDir = dirname(__FILE__) . '/../../tmp/';
         $filename = $tmpDir . 'csv_parser_file_test.csv';
         $result = FileWriter::write(
@@ -34,7 +34,7 @@ class FileWriterTest extends \PHPUnit_Framework_TestCase
      */
     public function testWriteFailShowsExceptionWhenNoFileNameGiven()
     {
-        $input = [[ 'a' => 1, 'b' => 2, 'c' => 44 ]];
+        $input = array(array( 'a' => 1, 'b' => 2, 'c' => 44 ));
         $actual = FileWriter::write($this->parser, $this->parser->fromArray($input));
     }
 }
