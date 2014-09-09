@@ -1,7 +1,5 @@
 <?php
 
-require_once dirname(__FILE__) . '/../vendor/autoload.php';
-
 class CsvTest extends PHPUnit_Framework_TestCase
 {
     protected function setUp()
