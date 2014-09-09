@@ -2,7 +2,7 @@
 
 namespace CsvParser;
 
-class Exception
+class Exception extends \Exception
 {
 
 }
