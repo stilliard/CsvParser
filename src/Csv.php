@@ -110,4 +110,16 @@ class Csv
     {
         // TODO
     }
+
+    public function removeDuplicates($column)
+    {
+        $index = array();
+        $this->filterRows(function ($row) use ($column, &$index) {
+            if (in_array($row[$column], $index)) {
+                return false;
+            }
+            $index[] = $row[$column];
+            return true;
+        });
+    }
 }

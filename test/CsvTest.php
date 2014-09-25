@@ -88,4 +88,17 @@ class CsvTest extends PHPUnit_Framework_TestCase
         $expected = array(array('id'=>1, 'name'=>'Bob'));
         $this->assertEquals($expected, $actual);
     }
+
+    public function testRemoveDuplicates()
+    {
+        $string = "id,name\n1,Bob\n2,Bill\n3,Bob\n4,James";
+        $parser = new \CsvParser\Parser();
+        $csv = $parser->fromString($string);
+        
+        $csv->removeDuplicates('name');
+        
+        $actual = $parser->toArray($csv);
+        $expected = array(0=>array('id'=>1, 'name'=>'Bob'), 1=>array('id'=>2, 'name'=>'Bill'), 3=>array('id'=>4, 'name'=>'James'));
+        $this->assertEquals($expected, $actual);
+    }
 }
