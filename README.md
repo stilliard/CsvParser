@@ -109,4 +109,7 @@ foreach ($chunks as $i => $chunk) {
     $parser->toFile($chunk, "output-{$i}.csv");
 }
 
+// Remove duplicates
+$csv->removeDuplicates('email');
+
 ```
