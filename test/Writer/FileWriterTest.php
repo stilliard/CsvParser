@@ -35,7 +35,7 @@ class FileWriterTest extends \PHPUnit_Framework_TestCase
     public function testWriteFailShowsExceptionWhenNoFileNameGiven()
     {
         $input = array(array( 'a' => 1, 'b' => 2, 'c' => 44 ));
-        $actual = FileWriter::write($this->parser, $this->parser->fromArray($input));
+        FileWriter::write($this->parser, $this->parser->fromArray($input));
     }
 }
 
