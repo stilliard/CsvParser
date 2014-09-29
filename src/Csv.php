@@ -122,4 +122,14 @@ class Csv
             return true;
         });
     }
+
+    public function removeBlanks($column)
+    {
+        $this->filterRows(function ($row) use ($column) {
+            if ( ! isset($row[$column]) || trim($row[$column])==='') {
+                return false;
+            }
+            return true;
+        });
+    }
 }
