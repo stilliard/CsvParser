@@ -112,4 +112,7 @@ foreach ($chunks as $i => $chunk) {
 // Remove duplicates
 $csv->removeDuplicates('email');
 
+// Remove blanks
+$csv->removeBlanks('email');
+
 ```
