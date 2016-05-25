@@ -117,6 +117,23 @@ air, moon roof, loaded',
             ),
         );
         $this->assertEquals($expected, $actual);
+
+        // sub check with carriage returns instead of line feeds (mac excel support)
+        $string = "id,name\r1,Bob\r2,Bill";
+        $parser = new \CsvParser\Parser();
+        $csv = $parser->fromString($string);
+        $actual = $parser->toArray($csv);
+        $expected = array(
+            array(
+                'id' => 1,
+                'name' => 'Bob',
+            ),
+            array(
+                'id' => 2,
+                'name' => 'Bill',
+            ),
+        );
+        $this->assertEquals($expected, $actual);
     }
 
     // example from http://en.wikipedia.org/wiki/Comma-separated_values
