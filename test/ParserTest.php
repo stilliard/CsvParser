@@ -8,18 +8,18 @@ class ParserTest extends PHPUnit_Framework_TestCase
         $parser = new \CsvParser\Parser();
         $csv = $parser->fromString($string);
         $actual = $parser->toArray($csv);
-        
+
         $expected = array(array('id'=>1, 'name'=>'Bob'),array('id'=>2, 'name'=>'Bill'));
         $this->assertEquals($expected, $actual);
     }
-    
+
     public function testFromArrayToStringSimple()
     {
         $array = array(array('id'=>1, 'name'=>'Bob'),array('id'=>2, 'name'=>'Bill'));
         $parser = new \CsvParser\Parser();
         $csv = $parser->fromArray($array);
         $actual = $parser->toString($csv);
-        
+
         $expected = '"id","name"
 "1","Bob"
 "2","Bill"';
@@ -38,7 +38,7 @@ air, moon roof, loaded",4799.00';
         $parser = new \CsvParser\Parser();
         $csv = $parser->fromString($string);
         $actual = $parser->toArray($csv);
-        
+
         $expected = array(
             array(
                 'Year' => '1997',
@@ -84,7 +84,7 @@ air, moon roof, loaded'\t4799.00";
         $parser = new \CsvParser\Parser("\t", "'");
         $csv = $parser->fromString($string);
         $actual = $parser->toArray($csv);
-        
+
         $expected = array(
             array(
                 'Year' => '1997',
@@ -199,7 +199,7 @@ air, moon roof, loaded',
                 'Price' => '4799.00',
             ),
         );
-        
+
         $this->assertEquals($expected, $actual);
 
         $parser = new \CsvParser\Parser("\t", "'");
@@ -212,7 +212,7 @@ air, moon roof, loaded',
 '1999'\t'Chevy'\t'Venture ''Extended Edition, Very Large'''\t''\t'5000.00'
 '1996'\t'Jeep'\t'Grand Cherokee'\t'MUST SELL!
 air, moon roof, loaded'\t'4799.00'";
-        
+
         $this->assertEquals($expected, $actual);
     }
 }

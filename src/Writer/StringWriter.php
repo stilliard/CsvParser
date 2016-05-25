@@ -19,7 +19,7 @@ class StringWriter implements WriterInterface
                 return $parser->fieldEnclosure . str_replace($parser->fieldEnclosure, $parser->fieldEnclosure.$parser->fieldEnclosure, $value) . $parser->fieldEnclosure;
             }, $line));
         }
-        
+
         return implode($parser->lineDelimiter, $output);
     }
 }
