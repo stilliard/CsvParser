@@ -116,6 +116,3 @@ $csv->removeDuplicates('email');
 $csv->removeBlanks('email');
 
 ```
-
-Development sponsored by [ecommerce.co.uk](https://www.ecommerce.co.uk/?utm_source=composer-csvparser&utm_medium=referral&utm_campaign=open-source)
-
