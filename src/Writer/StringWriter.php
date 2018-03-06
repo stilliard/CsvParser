@@ -8,18 +8,22 @@ class StringWriter implements WriterInterface
     {
         $data = $csv->getData();
 
-        $output = array(
-            implode($parser->fieldDelimiter, array_map(function ($value) use ($parser) {
-                return $parser->fieldEnclosure . str_replace($parser->fieldEnclosure, $parser->fieldEnclosure.$parser->fieldEnclosure, $value) . $parser->fieldEnclosure;
-            }, array_keys(current($data))))
-        );
+        if ($data && !empty($data)) {
+            $output = array(
+                implode($parser->fieldDelimiter, array_map(function ($value) use ($parser) {
+                    return $parser->fieldEnclosure . str_replace($parser->fieldEnclosure, $parser->fieldEnclosure.$parser->fieldEnclosure, $value) . $parser->fieldEnclosure;
+                }, array_keys(current($data))))
+            );
 
-        foreach ($data as $line) {
-            $output[] = implode($parser->fieldDelimiter, array_map(function ($value) use ($parser) {
-                return $parser->fieldEnclosure . str_replace($parser->fieldEnclosure, $parser->fieldEnclosure.$parser->fieldEnclosure, $value) . $parser->fieldEnclosure;
-            }, $line));
+            foreach ($data as $line) {
+                $output[] = implode($parser->fieldDelimiter, array_map(function ($value) use ($parser) {
+                    return $parser->fieldEnclosure . str_replace($parser->fieldEnclosure, $parser->fieldEnclosure.$parser->fieldEnclosure, $value) . $parser->fieldEnclosure;
+                }, $line));
+            }
+
+            return implode($parser->lineDelimiter, $output);
+        } else {
+            return '';
         }
-
-        return implode($parser->lineDelimiter, $output);
     }
 }
