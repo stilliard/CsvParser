@@ -1,4 +1,3 @@
-
 # Csv Parser
 Quickly take in and output csv formats.
 
@@ -6,6 +5,7 @@ Quickly take in and output csv formats.
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/stilliard/CsvParser/badges/quality-score.png?s=3f821d3231d78e86c41c9cd9213c68f164bb53d6)](https://scrutinizer-ci.com/g/stilliard/CsvParser/)
 [![Code Coverage](https://scrutinizer-ci.com/g/stilliard/CsvParser/badges/coverage.png?s=dbc9d91b767b84a1a649b5695b8a3cdce690684a)](https://scrutinizer-ci.com/g/stilliard/CsvParser/)
 [![Latest Stable Version](https://poser.pugx.org/stilliard/csvparser/v/stable.png)](https://packagist.org/packages/stilliard/csvparser) [![Total Downloads](https://poser.pugx.org/stilliard/csvparser/downloads.png)](https://packagist.org/packages/stilliard/csvparser) [![Latest Unstable Version](https://poser.pugx.org/stilliard/csvparser/v/unstable.png)](https://packagist.org/packages/stilliard/csvparser) [![License](https://poser.pugx.org/stilliard/csvparser/license.png)](https://packagist.org/packages/stilliard/csvparser)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fstilliard%2FCsvParser.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fstilliard%2FCsvParser?ref=badge_shield)
 
 ## Install
 ```bash
@@ -116,3 +116,7 @@ $csv->removeDuplicates('email');
 $csv->removeBlanks('email');
 
 ```
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fstilliard%2FCsvParser.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fstilliard%2FCsvParser?ref=badge_large)
