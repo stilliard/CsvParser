@@ -18,17 +18,19 @@ class StringReader implements ReaderInterface
 
         // format array of headings/keys
         $headings = str_getcsv($headings, $d, $e);
-        $numDelims = count($headings) -1; // number of field delims to find per line
 
-        // tricky bit of regex, optionally matching the text enclosure (ref as \2 after first match),
-        // and catches any content inside this enclosure, even if that would be the field or line delim
-        // then repeating this match followed by the field delim for the number of columns we need (minus 1) and then the match again this time without the field delim
-        // then splits the lines only when not in the enclosure
-        preg_match_all('/(('. $e .')?[\s\S]*?\2?'. $d .'){'. $numDelims .'}\2?[\s\S]*?\2?('. ($l=="\n" ? '\n|\r' : $l) .'|$)/', $body, $lines);
+        // Split row lines
+        // to do this we replace new lines with a key and then explode on them
+        // regex to match new lines, but not inside quotes, based on: https://stackoverflow.com/questions/632475/regex-to-pick-commas-outside-of-quotes/25544437#25544437
+        $rKey = '*%~LINE_BREAK~%*';
+        $qE = preg_quote($e);
+        $qL = $l=="\n" ? '\n|\r' : preg_quote($l);
+        $body = preg_replace('/'.$qE.'[^'.$qE.']*'.$qE.'(*SKIP)(*F)|'.$qL.'/', $rKey, $body);
+        $lines = explode($rKey, $body);
 
         // any lines found? loop them
-        if ( ! empty($lines) && ! empty($lines[0])) {
-            foreach ($lines[0] as $i => $line) {
+        if ( ! empty($lines)) {
+            foreach ($lines as $i => $line) {
                 if ($line==='') {
                     continue; // blank line...
                 }
