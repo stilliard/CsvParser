@@ -30,10 +30,8 @@ class StringReader implements ReaderInterface
 
         // any lines found? loop them
         if ( ! empty($lines)) {
+            $lines = array_values(array_filter($lines)); // filter out blank lines & re-index
             foreach ($lines as $i => $line) {
-                if ($line==='') {
-                    continue; // blank line...
-                }
                 $fields = str_getcsv($line, $d, $e);
                 $data[$i] = array();
                 // loop the headings to map to columns
