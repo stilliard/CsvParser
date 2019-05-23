@@ -2,7 +2,7 @@
 
 class CsvTest extends PHPUnit_Framework_TestCase
 {
-    protected function setUp()
+    public function setUp() : void
     {
         $this->string = "id,name\n1,Bob\n2,Bill";
         $this->parser = new \CsvParser\Parser();

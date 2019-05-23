@@ -5,7 +5,7 @@ use CsvParser\Writer\ArrayWriter;
 
 class ArrayWriterTest extends \PHPUnit_Framework_TestCase
 {
-    protected function setUp()
+    public function setUp() : void
     {
         $this->parser = new Parser();
     }
