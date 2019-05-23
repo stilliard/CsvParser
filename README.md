@@ -9,7 +9,7 @@ Quickly take in and output csv formats.
 
 ## Install
 ```bash
-composer require stilliard/csvparser 1.1.2
+composer require stilliard/csvparser 1.1.5
 ```
 
 ## Example usage:
@@ -47,6 +47,15 @@ $csv = $parser->fromFile('demo.csv');
 
 // get row count
 var_dump($csv->getRowCount());
+
+// get the first row as array from the csv
+var_dump($csv->first());
+
+// get the column headings / keys
+var_dump($csv->getKeys());
+
+// want to force a column sort / index?
+$csv->reKey(['id', 'name', 'email']);
 
 // append/prepend rows
 $csv->appendRow(['id'=>3, 'name'=>'Ben']);
@@ -116,7 +125,6 @@ $csv->removeDuplicates('email');
 $csv->removeBlanks('email');
 
 ```
-
 
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fstilliard%2FCsvParser.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fstilliard%2FCsvParser?ref=badge_large)

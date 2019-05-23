@@ -114,4 +114,31 @@ class CsvTest extends PHPUnit_Framework_TestCase
         $expected = array(0=>array('id'=>1, 'name'=>'Bob'), 1=>array('id'=>2, 'name'=>'Bill'), 3=>array('id'=>4, 'name'=>'James'));
         $this->assertEquals($expected, $actual);
     }
+
+    public function testFirst()
+    {
+        $string = "id,name\n1,Bob\n2,Bill\n3,\n4,James";
+        $parser = new \CsvParser\Parser();
+        $csv = $parser->fromString($string);
+        $expected = ['id' => 1, 'name' => 'Bob'];
+        $this->assertEquals($expected, $csv->first());
+    }
+
+    public function testGetKeys()
+    {
+        $string = "id,name\n1,Bob\n2,Bill\n3,\n4,James";
+        $parser = new \CsvParser\Parser();
+        $csv = $parser->fromString($string);
+        $expected = ['id', 'name'];
+        $this->assertEquals($expected, $csv->getKeys());
+    }
+
+    public function testReKey()
+    {
+        $string = "id,name\n1,Bob\n2,Bill\n3,\n4,James";
+        $parser = new \CsvParser\Parser();
+        $csv = $parser->fromString($string);
+        $csv->reKey(['name', 'id']);
+        $this->assertEquals("\"name\",\"id\"\n\"Bob\",\"1\"\n\"Bill\",\"2\"\n\"\",\"3\"\n\"James\",\"4\"", $parser->toString($csv));
+    }
 }
