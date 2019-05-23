@@ -29,11 +29,9 @@ class FileWriterTest extends \PHPUnit_Framework_TestCase
         unlink($filename);
     }
 
-    /**
-     * @expectedException CsvParser\Exception
-     */
     public function testWriteFailShowsExceptionWhenNoFileNameGiven()
     {
+        $this->expectException('CsvParser\Exception');
         $input = array(array( 'a' => 1, 'b' => 2, 'c' => 44 ));
         FileWriter::write($this->parser, $this->parser->fromArray($input));
     }
