@@ -31,7 +31,7 @@ foreach (Parser::stream(__DIR__ . '/your/path/input.csv') as $row) {
     var_dump($row);
 }
 // write file
-Parser::write($keys, $data, __DIR__ . '/your/path/output.csv');
+Parser::write($data, __DIR__ . '/your/path/output.csv');
 ```
 
 
