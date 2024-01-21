@@ -38,6 +38,16 @@ class Parser
         return Reader\FileReader::read($this, $file);
     }
 
+    protected static function instanceFromOptions(?array $options = null)
+    {
+        $options = $options ?? [];
+        return new static(
+            $options['fieldDelimiter'] ?? null,
+            $options['fieldEnclosure'] ?? null,
+            $options['lineDelimiter'] ?? null
+        );
+    }
+
     /* Writers */
 
     public function toString(Csv $csv)
@@ -62,4 +72,17 @@ class Parser
         return Writer\ChunksWriter::write($this, $csv, $size);
     }
 
+    /* Static helpers */
+
+    public static function stream($file, ?array $options = null)
+    {
+        $parser = static::instanceFromOptions($options);
+        return Reader\StreamReader::read($parser, $file);
+    }
+
+    public static function write($data, $filename, ?array $options = null)
+    {
+        $parser = static::instanceFromOptions($options);
+        return $parser->toFile(new Csv($data), $filename);
+    }
 }

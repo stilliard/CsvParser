@@ -15,11 +15,10 @@ class FileWriterTest extends \PHPUnit_Framework_TestCase
         $input = array(array( 'a' => 1, 'b' => 2, 'c' => 44 ));
         $tmpDir = dirname(__FILE__) . '/../../tmp/';
         $filename = $tmpDir . 'csv_parser_file_test.csv';
-        $result = FileWriter::write(
-            $this->parser,
-            $this->parser->fromArray($input),
-            $filename
-        );
+        $result = Parser::write($input, $filename, [
+            'fieldDelimiter' => ',',
+            'fieldEnclosure' => '',
+        ]);
         $this->assertTrue( !! $result);
         $this->assertFileExists($filename);
         $fileContents = file_get_contents($filename);
