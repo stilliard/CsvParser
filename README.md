@@ -14,15 +14,24 @@ composer require stilliard/csvparser 1.1.7
 
 ## Example usage:
 ```php
-
+use CsvParser\Parser;
 //
 // Simple array to string usage
 //
 $array = [['id'=>1, 'name'=>'Bob'],['id'=>2, 'name'=>'Bill']];
-$parser = new \CsvParser\Parser();
+$parser = new Parser();
 $csv = $parser->fromArray($array);
 var_dump($parser->toString($csv));
 ```
+
+## Example stream reading (better memory optimisations)
+```php
+// stream reading from a CSV file
+foreach (Parser::stream(__DIR__ . '/your/path/input.csv') as $row) {
+    var_dump($row);
+}
+```
+
 
 ```php
 //
