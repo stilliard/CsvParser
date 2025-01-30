@@ -137,5 +137,71 @@ $csv->removeBlanks('email');
 
 ```
 
+## Writing CSV as a Stream
+
+The `writeStream` method allows you to write CSV data as a stream. This can be useful for writing large datasets efficiently.
+
+### Example: Writing to a File
+
+```php
+use CsvParser\Parser;
+
+$file = fopen('output.csv', 'w');
+
+$callback = function () {
+    static $data = [
+        ['name' => 'John', 'age' => 30],
+        ['name' => 'Jane', 'age' => 25],
+        ['name' => 'Doe', 'age' => 40],
+    ];
+    return array_shift($data);
+};
+
+Parser::writeStream($file, ['name', 'age'], $callback);
+
+fclose($file);
+```
+
+### Example: Writing to the Screen
+
+```php
+use CsvParser\Parser;
+
+$resource = fopen('php://output', 'w');
+
+$callback = function () {
+    $data = [
+        ['name' => 'John', 'age' => 30],
+        ['name' => 'Jane', 'age' => 25],
+        ['name' => 'Doe', 'age' => 40],
+    ];
+    foreach ($data as $row) {
+        yield $row;
+    }
+};
+
+Parser::writeStream($resource, ['name', 'age'], $callback);
+
+fclose($resource);
+```
+
+### Example: Writing from a PDO Fetch
+
+```php
+use CsvParser\Parser;
+use PDO;
+
+$pdo = new PDO('mysql:host=localhost;dbname=testdb', 'username', 'password');
+$stmt = $pdo->query('SELECT name, age FROM users');
+
+$file = fopen('output.csv', 'w');
+
+Parser::writeStream($file, ['name', 'age'], fn() => $stmt->fetch(PDO::FETCH_NUM));
+
+fclose($file);
+```
+
+In this example, the `callback` function uses a PDO statement to fetch rows from a database. The `writeStream` method will continue to call the `callback` until it returns `false`.
+
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fstilliard%2FCsvParser.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fstilliard%2FCsvParser?ref=badge_large)

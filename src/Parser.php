@@ -72,6 +72,11 @@ class Parser
         return Writer\ChunksWriter::write($this, $csv, $size);
     }
 
+    public function toStream($resource, $keys, $callback)
+    {
+        return Writer\StreamWriter::write($this, $resource, $keys, $callback);
+    }
+
     /* Static helpers */
 
     public static function stream($file, ?array $options = null)
@@ -84,5 +89,11 @@ class Parser
     {
         $parser = static::instanceFromOptions($options);
         return $parser->toFile(new Csv($data), $filename);
+    }
+
+    public static function writeStream($resource, $keys, $callback, ?array $options = null)
+    {
+        $parser = static::instanceFromOptions($options);
+        return $parser->toStream($resource, $keys, $callback);
     }
 }
