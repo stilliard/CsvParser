@@ -12,10 +12,13 @@ class StreamWriter
             throw new \InvalidArgumentException('Invalid resource provided');
         }
 
-        fwrite($resource, $parser->fieldEnclosure . implode($parser->fieldEnclosure . $parser->fieldDelimiter . $parser->fieldEnclosure, $keys) . $parser->fieldEnclosure . $parser->lineDelimiter);
+        $escape = fn ($value) =>
+            str_replace($parser->fieldEnclosure, $parser->fieldEnclosure . $parser->fieldEnclosure, $value);
+
+        fwrite($resource, $parser->fieldEnclosure . implode($parser->fieldEnclosure . $parser->fieldDelimiter . $parser->fieldEnclosure, array_map($escape, $keys)) . $parser->fieldEnclosure . $parser->lineDelimiter);
 
         while ($row = $callback()) {
-            fwrite($resource, $parser->fieldEnclosure . implode($parser->fieldEnclosure . $parser->fieldDelimiter . $parser->fieldEnclosure, $row) . $parser->fieldEnclosure . $parser->lineDelimiter);
+            fwrite($resource, $parser->fieldEnclosure . implode($parser->fieldEnclosure . $parser->fieldDelimiter . $parser->fieldEnclosure, array_map($escape, $row)) . $parser->fieldEnclosure . $parser->lineDelimiter);
         }
     }
 }
