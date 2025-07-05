@@ -203,5 +203,13 @@ fclose($file);
 
 In this example, the `callback` function uses a PDO statement to fetch rows from a database. The `writeStream` method will continue to call the `callback` until it returns `false`.
 
+## Test
+To run the tests, you can use PHPUnit. Make sure you have PHPUnit installed and then run:
+
+```bash
+phpunit .
+```
+
+
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fstilliard%2FCsvParser.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fstilliard%2FCsvParser?ref=badge_large)
