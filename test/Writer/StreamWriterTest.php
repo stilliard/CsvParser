@@ -11,13 +11,15 @@ class StreamWriterTest extends \PHPUnit_Framework_TestCase
         $file = fopen('php://temp', 'w+');
         $keys = ['name', 'age'];
 
-        $callback = function() {
-            static $data = [
+        $callback = function () {
+            $data = [
                 ['name' => 'John', 'age' => 30],
                 ['name' => 'Jane', 'age' => 25],
                 ['name' => 'Doe', 'age' => 40],
             ];
-            return array_shift($data);
+            foreach ($data as $row) {
+                yield $row;
+            }
         };
 
         StreamWriter::write($parser, $file, $keys, $callback);
