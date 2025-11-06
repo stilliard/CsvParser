@@ -28,7 +28,7 @@ class Csv
 
     public function getKeys()
     {
-        return array_keys($this->first());
+        return array_keys($this->first() ?: []);
     }
 
     /**
@@ -39,6 +39,9 @@ class Csv
     {
         if (! $keys) {
             $keys = $this->getKeys();
+        }
+        if (empty($keys) || empty($this->data)) {
+            return;
         }
         $template = array_map(function () { return ''; }, array_flip($keys));
         $this->mapRows(function ($row) use ($template) {
