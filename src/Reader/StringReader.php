@@ -21,7 +21,7 @@ class StringReader implements ReaderInterface
         // get headings and body (if \n line feeds, also support reading on carriage returns)
         list($headings, $body) = $l=="\n" ? preg_split('/[\n\r]/', $string, 2) : explode($l, $string, 2);
 
-        // Ensure we have a body variable even if there's no second element
+        // Ensure $body is defined when the string contains only headers without a line break (i.e., no second element from split)
         if (! isset($body)) {
             $body = '';
         }
