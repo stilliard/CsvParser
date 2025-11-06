@@ -141,4 +141,31 @@ class CsvTest extends PHPUnit_Framework_TestCase
         $csv->reKey(['name', 'id']);
         $this->assertEquals("\"name\",\"id\"\n\"Bob\",\"1\"\n\"Bill\",\"2\"\n\"\",\"3\"\n\"James\",\"4\"", $parser->toString($csv));
     }
+
+    public function testNoDataReKey()
+    {
+        $string = "";
+        $parser = new \CsvParser\Parser();
+        $csv = $parser->fromString($string);
+        $csv->reKey(['name', 'id']);
+        $this->assertEquals("", $parser->toString($csv));
+
+        // from array
+        $array = [];
+        $csv = $parser->fromArray($array);
+        $csv->reKey(['name', 'id']);
+        $this->assertEquals("", $parser->toString($csv));
+
+        // rekey with null
+        $array = [];
+        $csv = $parser->fromArray($array);
+        $csv->reKey(null);
+        $this->assertEquals("", $parser->toString($csv));
+
+        // and passing null instead of array
+        $array = null;
+        $csv = $parser->fromArray($array);
+        $csv->reKey(['name', 'id']);
+        $this->assertEquals("", $parser->toString($csv));
+    }
 }
