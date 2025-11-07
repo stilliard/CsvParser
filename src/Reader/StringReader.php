@@ -8,6 +8,11 @@ class StringReader implements ReaderInterface
     {
         $data = array();
 
+        // Handle empty string case
+        if (empty($string)) {
+            return new \CsvParser\Csv($data);
+        }
+
         // shorten some vars for use later
         $d = $parser->fieldDelimiter;
         $e = $parser->fieldEnclosure;
@@ -15,6 +20,11 @@ class StringReader implements ReaderInterface
 
         // get headings and body (if \n line feeds, also support reading on carriage returns)
         list($headings, $body) = $l=="\n" ? preg_split('/[\n\r]/', $string, 2) : explode($l, $string, 2);
+
+        // Ensure $body is defined when the string contains only headers without a line break (i.e., no second element from split)
+        if (! isset($body)) {
+            $body = '';
+        }
 
         // format array of headings/keys
         $headings = str_getcsv($headings, $d, $e);
