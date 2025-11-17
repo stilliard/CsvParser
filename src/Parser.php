@@ -33,7 +33,7 @@ class Parser
         return Reader\ArrayReader::read($this, $array);
     }
 
-    public function fromFile($file, $fixEncoding = true)
+    public function fromFile($file, bool $fixEncoding = true)
     {
         Reader\FileReader::$fixEncoding = $fixEncoding;
         return Reader\FileReader::read($this, $file);
