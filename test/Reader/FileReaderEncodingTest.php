@@ -59,8 +59,8 @@ class FileReaderEncodingTest extends \PHPUnit_Framework_TestCase
         $this->assertStringContainsString('dash', $rows[0]['Notes']);
         $this->assertEquals('García', $rows[1]['Name']);
         $this->assertEquals('López & Hernández', $rows[1]['Company']);
-        // Trademark and Copyright symbols should be preserved
-        $this->assertStringContainsString('Copyright', $rows[1]['Notes']);
+        $this->assertStringContainsString('™', $rows[1]['Notes']); // trademark
+        $this->assertStringContainsString('©', $rows[1]['Notes']); // copyright
     }
 
     public function testWindows1252SpecialCharacters()
@@ -70,12 +70,14 @@ class FileReaderEncodingTest extends \PHPUnit_Framework_TestCase
         $rows = $parser->toArray($csv);
 
         $this->assertEquals(4, count($rows));
-        $this->assertEquals('Editor', $rows[0]['Name']);
-        $this->assertStringContainsString('Ellipsis', $rows[0]['Notes']);
-        $this->assertStringContainsString('bullet', $rows[0]['Notes']);
-        $this->assertStringContainsString('dash', $rows[1]['Notes']);
-        $this->assertStringContainsString('quotes', $rows[2]['Notes']); // Contains smart quotes
-        $this->assertStringContainsString('trademark', $rows[3]['Notes']);
+        $this->assertStringContainsString('…', $rows[0]['Notes']); // ellipsis
+        $this->assertStringContainsString('•', $rows[0]['Notes']); // bullet
+        $this->assertStringContainsString('–', $rows[1]['Notes']); // en dash
+        $this->assertStringContainsString('—', $rows[1]['Notes']); // em dash
+        $this->assertStringContainsString("\u{2018}", $rows[2]['Notes']); // left single quote '
+        $this->assertStringContainsString("\u{201C}", $rows[2]['Notes']); // left double quote "
+        $this->assertStringContainsString('€', $rows[3]['Notes']); // Euro symbol
+        $this->assertStringContainsString('™', $rows[3]['Notes']); // trademark
     }
 
     public function testHeavyAccents()

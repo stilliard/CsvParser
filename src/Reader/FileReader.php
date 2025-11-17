@@ -28,11 +28,16 @@ class FileReader implements ReaderInterface
             // Try to detect the encoding and convert
             // Note: Windows-1252 is a superset of ISO-8859-1, so try it first
             $encoding = mb_detect_encoding($contents, ['Windows-1252', 'ISO-8859-15', 'ISO-8859-1'], true);
+            
+            // mb_detect_encoding can't reliably distinguish between these encodings
+            // Windows-1252 is the safest bet as it's a superset of ISO-8859-1
+            // and handles special characters in the 0x80-0x9F range
+            if (!$encoding || in_array($encoding, ['ISO-8859-1', 'ISO-8859-15'])) {
+                $encoding = 'Windows-1252';
+            }
+            
             if ($encoding && $encoding !== 'UTF-8') {
-                $contents = iconv($encoding, 'UTF-8//IGNORE', $contents);
-            } elseif (!$encoding) {
-                // If detection fails, assume Windows-1252 as it's most common
-                $contents = iconv('Windows-1252', 'UTF-8//IGNORE', $contents);
+                $contents = iconv($encoding, 'UTF-8//TRANSLIT', $contents);
             }
         } else {
             // Content appears to be UTF-8, but check for double-encoding patterns
@@ -42,7 +47,7 @@ class FileReader implements ReaderInterface
                 
                 foreach ($encodings as $encoding) {
                     $attempt = iconv('UTF-8', $encoding.'//IGNORE', $contents);
-                    $attempt = iconv($encoding, 'UTF-8//IGNORE', $attempt);
+                    $attempt = iconv($encoding, 'UTF-8//TRANSLIT', $attempt);
                     
                     // Check if this fixed the double-encoding
                     if (!self::hasDoubleEncoding($attempt)) {
