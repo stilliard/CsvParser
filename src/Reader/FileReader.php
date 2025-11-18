@@ -82,8 +82,8 @@ class FileReader implements ReaderInterface
             // From ISO-8859-1/Windows-1252
             'Ã¤', 'Ã¶', 'Ã¼', 'Ã„', 'Ã–', 'Ã‚', 'ÃŸ',
             'Ã©', 'Ã¨', 'Ã¡', 'Ã ', 'Ã­', 'Ã³', 'Ã±', 'Ã§',
-            // Windows-1252 specific (smart quotes, em dash, etc.)
-            'â€œ', 'â€', 'â€™', 'â€˜', 'â€"', 'â€"', 'â€¦',
+            // Windows-1252 specific (smart quotes, en dash, em dash, ellipsis)
+            'â€œ', 'â€', 'â€™', 'â€˜', 'â€“', 'â€”', 'â€¦',
             // Other patterns
             'Ã‚Â', 'Ã¢â‚¬'
         ];
