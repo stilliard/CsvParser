@@ -35,8 +35,7 @@ class Parser
 
     public function fromFile($file, bool $fixEncoding = true)
     {
-        Reader\FileReader::$fixEncoding = $fixEncoding;
-        return Reader\FileReader::read($this, $file);
+        return Reader\FileReader::read($this, $file, $fixEncoding);
     }
 
     protected static function instanceFromOptions(?array $options = null)

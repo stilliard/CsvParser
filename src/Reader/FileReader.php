@@ -4,9 +4,7 @@ namespace CsvParser\Reader;
 
 class FileReader implements ReaderInterface
 {
-    public static bool $fixEncoding = true;
-
-    public static function read(\CsvParser\Parser $parser, $file)
+    public static function read(\CsvParser\Parser $parser, $file, bool $fixEncoding = true)
     {
         $contents = file_get_contents($file);
 
@@ -14,7 +12,7 @@ class FileReader implements ReaderInterface
         $contents = preg_replace('/^\xEF\xBB\xBF/', '', $contents);
 
         // Fix encoding issues including double-encoding
-        if (self::$fixEncoding) {
+        if ($fixEncoding) {
             $contents = self::fixEncodingIssues($contents);
         }
         
