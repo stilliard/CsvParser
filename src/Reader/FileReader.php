@@ -43,6 +43,9 @@ class FileReader implements ReaderInterface
         } else {
             // Content appears to be UTF-8, but check for double-encoding patterns
             if (self::hasDoubleEncoding($contents)) {
+                // Count mojibake patterns in the original
+                $originalCount = self::countDoubleEncodingPatterns($contents);
+                
                 // Try to fix double-encoding
                 $encodings = ['Windows-1252', 'ISO-8859-1', 'ISO-8859-15'];
                 
@@ -57,8 +60,9 @@ class FileReader implements ReaderInterface
                         continue;
                     }
                     
-                    // Check if this fixed the double-encoding
-                    if (!self::hasDoubleEncoding($attempt)) {
+                    // Only use the fix if it reduces mojibake patterns
+                    $attemptCount = self::countDoubleEncodingPatterns($attempt);
+                    if ($attemptCount < $originalCount) {
                         $contents = $attempt;
                         break;
                     }
@@ -77,6 +81,11 @@ class FileReader implements ReaderInterface
     
     private static function hasDoubleEncoding(string $string): bool
     {
+        return self::countDoubleEncodingPatterns($string) > 0;
+    }
+    
+    private static function countDoubleEncodingPatterns(string $string): int
+    {
         // Common double-encoded patterns
         $patterns = [
             // From ISO-8859-1/Windows-1252
@@ -88,12 +97,11 @@ class FileReader implements ReaderInterface
             'Ã‚Â', 'Ã¢â‚¬'
         ];
         
+        $count = 0;
         foreach ($patterns as $pattern) {
-            if (strpos($string, $pattern) !== false) {
-                return true;
-            }
+            $count += substr_count($string, $pattern);
         }
         
-        return false;
+        return $count;
     }
 }

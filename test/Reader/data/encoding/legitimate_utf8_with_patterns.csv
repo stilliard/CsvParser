@@ -1,0 +1,5 @@
+"Pattern","Count","Notes"
+"Ã¤ Ã¶ Ã¼","3","These are intentional UTF-8 characters used in documentation about mojibake"
+"Ã„ Ã– ÃŸ","3","More examples of mojibake patterns that should not be altered"
+"Ã© Ã¨ Ã¡","3","French accented character mojibake examples for reference"
+"Ã­ Ã³ Ã±","3","Spanish character mojibake patterns preserved as teaching examples"

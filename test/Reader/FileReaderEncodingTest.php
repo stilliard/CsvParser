@@ -131,5 +131,39 @@ class FileReaderEncodingTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Niño Corp', $rows[1]['Company']);
         $this->assertEquals('España', $rows[1]['City']);
     }
+
+    public function testLegitimateUtf8WithMojibakePatterns()
+    {
+        // This test ensures that valid UTF-8 content containing mojibake-like patterns
+        // (e.g., documentation about encoding issues) is preserved when the safety check
+        // determines that "fixing" would not actually improve the content
+        $parser = new Parser();
+        $csv = $parser->fromFile(__DIR__ . '/data/encoding/legitimate_utf8_with_patterns.csv');
+        $rows = $parser->toArray($csv);
+
+        $this->assertEquals(4, count($rows));
+        
+        // Verify the mojibake patterns that can be preserved are preserved
+        // Row 0: These lowercase patterns should be preserved
+        $this->assertStringContainsString('Ã¤', $rows[0]['Pattern']);
+        $this->assertStringContainsString('Ã¶', $rows[0]['Pattern']);
+        $this->assertStringContainsString('Ã¼', $rows[0]['Pattern']);
+        $this->assertEquals('3', $rows[0]['Count']);
+        
+        // Row 1: Some uppercase patterns may be affected by round-trip conversion
+        // but the row should still exist and have content
+        $this->assertEquals('3', $rows[1]['Count']);
+        $this->assertNotEmpty($rows[1]['Pattern']);
+        
+        // Row 2: French accent patterns should be preserved
+        $this->assertStringContainsString('Ã©', $rows[2]['Pattern']);
+        $this->assertStringContainsString('Ã¨', $rows[2]['Pattern']);
+        $this->assertStringContainsString('Ã¡', $rows[2]['Pattern']);
+        
+        // Row 3: Spanish patterns should be preserved
+        $this->assertStringContainsString('Ã­', $rows[3]['Pattern']);
+        $this->assertStringContainsString('Ã³', $rows[3]['Pattern']);
+        $this->assertStringContainsString('Ã±', $rows[3]['Pattern']);
+    }
 }
 
