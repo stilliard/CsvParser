@@ -37,7 +37,10 @@ class FileReader implements ReaderInterface
             }
             
             if ($encoding && $encoding !== 'UTF-8') {
-                $contents = iconv($encoding, 'UTF-8//TRANSLIT', $contents);
+                $converted = iconv($encoding, 'UTF-8//TRANSLIT', $contents);
+                if ($converted !== false) {
+                    $contents = $converted;
+                }
             }
         } else {
             // Content appears to be UTF-8, but check for double-encoding patterns
@@ -47,7 +50,14 @@ class FileReader implements ReaderInterface
                 
                 foreach ($encodings as $encoding) {
                     $attempt = iconv('UTF-8', $encoding.'//IGNORE', $contents);
+                    if ($attempt === false) {
+                        continue;
+                    }
+                    
                     $attempt = iconv($encoding, 'UTF-8//TRANSLIT', $attempt);
+                    if ($attempt === false) {
+                        continue;
+                    }
                     
                     // Check if this fixed the double-encoding
                     if (!self::hasDoubleEncoding($attempt)) {
@@ -59,7 +69,10 @@ class FileReader implements ReaderInterface
         }
         
         // Final cleanup - ensure valid UTF-8
-        $contents = iconv('UTF-8', 'UTF-8//IGNORE', $contents);
+        $cleaned = iconv('UTF-8', 'UTF-8//IGNORE', $contents);
+        if ($cleaned !== false) {
+            $contents = $cleaned;
+        }
         
         return $contents;
     }
