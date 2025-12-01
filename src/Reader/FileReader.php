@@ -16,7 +16,11 @@ class FileReader implements ReaderInterface
     public static function read(\CsvParser\Parser $parser, $file, array $options = [])
     {
         $options = array_merge(self::$options, $options);
+
         $contents = file_get_contents($file);
+        if ($contents === false) {
+            throw new \RuntimeException("Failed to read file: {$file}");
+        }
 
         // remove UTF-8 BOM that excel can add
         $contents = preg_replace('/^\xEF\xBB\xBF/', '', $contents);
