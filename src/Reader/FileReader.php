@@ -83,6 +83,10 @@ class FileReader implements ReaderInterface
         // Final cleanup - ensure valid UTF-8
         $cleaned = iconv('UTF-8', 'UTF-8//IGNORE', $contents);
         if ($cleaned !== false) {
+            // Log if any characters were dropped
+            if (strlen($cleaned) < strlen($contents)) {
+                error_log('[CSV] Warning: Dropped invalid UTF-8 sequences during encoding cleanup in FileReader.');
+            }
             $contents = $cleaned;
         }
 
