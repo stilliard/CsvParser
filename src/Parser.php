@@ -33,9 +33,9 @@ class Parser
         return Reader\ArrayReader::read($this, $array);
     }
 
-    public function fromFile($file, bool $fixEncoding = true)
+    public function fromFile($file, array $options = [])
     {
-        return Reader\FileReader::read($this, $file, $fixEncoding);
+        return Reader\FileReader::read($this, $file, $options);
     }
 
     protected static function instanceFromOptions(?array $options = null)

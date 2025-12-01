@@ -4,15 +4,25 @@ namespace CsvParser\Reader;
 
 class FileReader implements ReaderInterface
 {
-    public static function read(\CsvParser\Parser $parser, $file, bool $fixEncoding = true)
+    protected static $options = [
+        'fixEncoding' => false, // requires opt-in to fix encoding issues
+    ];
+
+    public static function setDefaultOptions(array $options)
     {
+        self::$options = array_merge(self::$options, $options);
+    }
+
+    public static function read(\CsvParser\Parser $parser, $file, array $options = [])
+    {
+        $options = array_merge(self::$options, $options);
         $contents = file_get_contents($file);
 
         // remove UTF-8 BOM that excel can add
         $contents = preg_replace('/^\xEF\xBB\xBF/', '', $contents);
 
         // Fix encoding issues including double-encoding
-        if ($fixEncoding) {
+        if ($options['fixEncoding']) {
             $contents = self::fixEncodingIssues($contents);
         }
 

@@ -1,9 +1,17 @@
 <?php
 
 use CsvParser\Parser;
+use CsvParser\Reader\FileReader;
 
 class FileReaderEncodingTest extends \PHPUnit_Framework_TestCase
 {
+    public function setUp(): void
+    {
+        FileReader::setDefaultOptions([
+            'fixEncoding' => true,
+        ]);
+    }
+
     public function testGermanBusinesses()
     {
         $parser = new Parser();
