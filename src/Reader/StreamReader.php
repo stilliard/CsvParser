@@ -11,7 +11,7 @@ class StreamReader implements ReaderInterface
     {
         $handle = fopen($file, 'r');
         if ($handle === false) {
-            throw new Exception("Could not open file: $file");
+            throw new Exception("Could not open file: " . basename($file));
         }
         $headings = fgetcsv($handle, 0, $parser->fieldDelimiter, $parser->fieldEnclosure);
 

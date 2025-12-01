@@ -2,6 +2,8 @@
 
 namespace CsvParser\Reader;
 
+use Exception;
+
 class FileReader implements ReaderInterface
 {
     protected static $options = [
@@ -19,7 +21,7 @@ class FileReader implements ReaderInterface
 
         $contents = file_get_contents($file);
         if ($contents === false) {
-            throw new \RuntimeException("Failed to read file: {$file}");
+            throw new Exception("Could not open file: " . basename($file));
         }
 
         // remove UTF-8 BOM that excel can add
