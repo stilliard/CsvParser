@@ -11,6 +11,7 @@ namespace CsvParser\Encoding;
  */
 class BasicEncodingConverter implements EncodingConverterInterface
 {
+    use DoubleEncodingDetectionTrait;
     /**
      * Convert content to UTF-8
      *
@@ -145,53 +146,5 @@ class BasicEncodingConverter implements EncodingConverterInterface
         }
 
         return $contents;
-    }
-
-    /**
-     * Check if string contains double-encoding patterns
-     *
-     * @param string $string Content to check
-     * @return bool True if double-encoding patterns detected
-     */
-    private function hasDoubleEncoding(string $string): bool
-    {
-        return $this->countDoubleEncodingPatterns($string) > 0;
-    }
-
-    /**
-     * Count mojibake patterns in a string
-     *
-     * @param string $string Content to check
-     * @return int Number of mojibake patterns found
-     */
-    private function countDoubleEncodingPatterns(string $string): int
-    {
-        // Common double-encoded patterns for UK/FR/DE/ES locales
-        $patterns = [
-            // German umlauts and ß (ä, ö, ü, Ä, Ö, Ü, ß)
-            'Ã¤', 'Ã¶', 'Ã¼', 'Ã„', 'Ã–', 'Ã‚', 'ÃŸ',
-
-            // French accented characters (é, è, ê, à, ç, ô, î, â, ù, û, ë, ï)
-            'Ã©', 'Ã¨', 'Ãª', 'Ã ', 'Ã§', 'Ã´', 'Ã®', 'Ã¢', 'Ã¹', 'Ã»', 'Ã«', 'Ã¯',
-
-            // Spanish accented characters (á, é, í, ó, ú, ñ, ü, ¿, ¡)
-            'Ã¡', 'Ã­', 'Ã³', 'Ãº', 'Ã±', 'Â¿', 'Â¡',
-
-            // Currency and common symbols (€, £, ©, ®, ™)
-            'â‚¬', 'Â£', 'Â©', 'Â®', 'â„¢',
-
-            // Windows-1252 specific (smart quotes, en dash, em dash, ellipsis, bullet)
-            'â€œ', 'â€', 'â€™', 'â€˜', 'â€"', 'â€"', 'â€¦', 'â€¢',
-
-            // Other common double-encoding artifacts
-            'Ã‚Â', 'Ã¢â‚¬'
-        ];
-
-        $count = 0;
-        foreach ($patterns as $pattern) {
-            $count += substr_count($string, $pattern);
-        }
-
-        return $count;
     }
 }
