@@ -20,8 +20,12 @@ class StreamReader implements ReaderInterface
             $headings[0] = preg_replace('/^\xEF\xBB\xBF/', '', $headings[0]); // remove UTF-8 BOM
         }
 
+        $index = 0;
         while (($row = fgetcsv($handle, 0, $parser->fieldDelimiter, $parser->fieldEnclosure)) !== false) {
-            yield array_combine($headings, $row);
+            $combined = array_combine($headings, $row);
+            $combined = $parser->applyStringReaderMiddlewareToRow($combined, $index);
+            yield $combined;
+            $index++;
         }
     }
 }
