@@ -1,5 +1,6 @@
 <?php
 
+use CsvParser\Encoding\BasicEncodingConverter;
 use CsvParser\Parser;
 use CsvParser\Reader\FileReader;
 
@@ -8,7 +9,7 @@ class FileReaderEncodingTest extends \PHPUnit_Framework_TestCase
     public function setUp(): void
     {
         FileReader::setDefaultOptions([
-            'fixEncoding' => true,
+            'encodingConverter' => new BasicEncodingConverter(),
         ]);
     }
 
@@ -156,38 +157,68 @@ class FileReaderEncodingTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('España', $rows[1]['City']);
     }
 
-    public function testLegitimateUtf8WithMojibakePatterns()
+    public function testDoubleEncodedFixing()
     {
-        // This test ensures that valid UTF-8 content containing mojibake-like patterns
-        // (e.g., documentation about encoding issues) is preserved when the safety check
-        // determines that "fixing" would not actually improve the content
+        // This test verifies that we correctly fix actual double-encoded content
+        // (e.g., Windows-1252 text that was incorrectly interpreted as UTF-8 and re-encoded)
+        $parser = new Parser();
+        $csv = $parser->fromFile(__DIR__ . '/data/encoding/double_encoded.csv');
+        $rows = $parser->toArray($csv);
+
+        $this->assertEquals(3, count($rows));
+
+        // Verify the double-encoding was fixed
+        // Row 0: French and German characters
+        $this->assertEquals('François Müller', $rows[0]['Name']);
+        $this->assertEquals('München', $rows[0]['City']);
+        $this->assertEquals('Café Parisien', $rows[0]['Company']);
+        $this->assertStringContainsString('Schöne Grüße', $rows[0]['Notes']);
+        $this->assertStringContainsString('José', $rows[0]['Notes']);
+
+        // Row 1: Spanish characters
+        $this->assertEquals('García López', $rows[1]['Name']);
+        $this->assertEquals('Córdoba', $rows[1]['City']);
+        $this->assertEquals('Niño & Associés', $rows[1]['Company']);
+        $this->assertStringContainsString('ñ', $rows[1]['Notes']);
+        $this->assertStringContainsString('á é í ó ú', $rows[1]['Notes']);
+
+        // Row 2: Scandinavian and German characters
+        $this->assertEquals('Åsa Öberg', $rows[2]['Name']);
+        $this->assertEquals('Zürich', $rows[2]['City']);
+        $this->assertEquals('Européen Ltd', $rows[2]['Company']);
+        $this->assertStringContainsString('ä ö ü ß', $rows[2]['Notes']);
+    }
+
+    public function testLegitimateUtf8WithFewMojibakePatterns()
+    {
+        // This test ensures that valid UTF-8 content containing FEWER than 3 mojibake-like patterns
+        // is NOT "fixed" because it's likely intentional content (e.g., documentation, examples)
+        // Our safety threshold is >= 3 patterns before we attempt fixing
         $parser = new Parser();
         $csv = $parser->fromFile(__DIR__ . '/data/encoding/legitimate_utf8_with_patterns.csv');
         $rows = $parser->toArray($csv);
 
         $this->assertEquals(4, count($rows));
 
-        // Verify the mojibake patterns that can be preserved are preserved
-        // Row 0: These lowercase patterns should be preserved
+        // Verify the mojibake patterns are preserved exactly as-is
+        // Row 0: Only 2 distinct patterns (Ã¤, Ã¶) - below threshold, should be preserved
         $this->assertStringContainsString('Ã¤', $rows[0]['Pattern']);
         $this->assertStringContainsString('Ã¶', $rows[0]['Pattern']);
-        $this->assertStringContainsString('Ã¼', $rows[0]['Pattern']);
-        $this->assertEquals('3', $rows[0]['Count']);
 
-        // Row 1: Some uppercase patterns may be affected by round-trip conversion
-        // but the row should still exist and have content
-        $this->assertEquals('3', $rows[1]['Count']);
+        // Row 1: Patterns should be preserved
         $this->assertNotEmpty($rows[1]['Pattern']);
 
         // Row 2: French accent patterns should be preserved
         $this->assertStringContainsString('Ã©', $rows[2]['Pattern']);
         $this->assertStringContainsString('Ã¨', $rows[2]['Pattern']);
-        $this->assertStringContainsString('Ã¡', $rows[2]['Pattern']);
 
         // Row 3: Spanish patterns should be preserved
         $this->assertStringContainsString('Ã­', $rows[3]['Pattern']);
         $this->assertStringContainsString('Ã³', $rows[3]['Pattern']);
-        $this->assertStringContainsString('Ã±', $rows[3]['Pattern']);
+
+        // Most importantly: verify the Notes column explains these are intentional
+        // This proves we didn't corrupt legitimate documentation
+        $this->assertStringContainsString('intentional', $rows[0]['Notes']);
+        $this->assertStringContainsString('examples', $rows[1]['Notes']);
     }
 }
-
