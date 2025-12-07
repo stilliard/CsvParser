@@ -124,6 +124,23 @@ class FileReaderEncodingTest extends \PHPUnit_Framework_TestCase
         $this->assertStringContainsString('åäöÅÄÖ', $rows[2]['Notes']);
     }
 
+    public function testUtf16LEEncoding()
+    {
+        $parser = new Parser();
+        $csv = $parser->fromFile(__DIR__ . '/data/encoding/utf16le.csv');
+        $rows = $parser->toArray($csv);
+
+        $this->assertEquals(2, count($rows));
+        $this->assertEquals('François', $rows[0]['Name']);
+        $this->assertEquals('Café München', $rows[0]['Company']);
+        $this->assertEquals('São Paulo', $rows[0]['City']);
+        $this->assertStringContainsString('€', $rows[0]['Price']);
+        $this->assertEquals('José', $rows[1]['Name']);
+        $this->assertEquals('Niño Corp', $rows[1]['Company']);
+        $this->assertEquals('España', $rows[1]['City']);
+        $this->assertStringContainsString('£', $rows[1]['Price']);
+    }
+
     public function testUtf8WithBom()
     {
         $parser = new Parser();

@@ -37,6 +37,26 @@ class FileReader implements ReaderInterface
 
     private static function fixEncodingIssues(string $contents): string
     {
+        // Check for UTF-16 BOM (Excel on Mac sometimes uses this)
+        if (strlen($contents) >= 2) {
+            $bom = substr($contents, 0, 2);
+            if ($bom === "\xFF\xFE") {
+                // UTF-16LE BOM
+                $converted = iconv('UTF-16LE', 'UTF-8//IGNORE', $contents);
+                if ($converted !== false) {
+                    // Remove the UTF-8 BOM that results from converting the UTF-16 BOM
+                    return preg_replace('/^\xEF\xBB\xBF/', '', $converted);
+                }
+            } elseif ($bom === "\xFE\xFF") {
+                // UTF-16BE BOM
+                $converted = iconv('UTF-16BE', 'UTF-8//IGNORE', $contents);
+                if ($converted !== false) {
+                    // Remove the UTF-8 BOM that results from converting the UTF-16 BOM
+                    return preg_replace('/^\xEF\xBB\xBF/', '', $converted);
+                }
+            }
+        }
+
         // Check if the content is valid UTF-8
         if (! mb_check_encoding($contents, 'UTF-8')) {
             // mb_detect_encoding is not reliable for distinguishing between similar encodings
