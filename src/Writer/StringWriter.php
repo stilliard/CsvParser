@@ -12,6 +12,7 @@ class StringWriter implements WriterInterface
     public static function write(\CsvParser\Parser $parser, \CsvParser\Csv $csv)
     {
         $data = $csv->getData();
+        $data = $parser->applyStringWriterMiddleware($data);
 
         if ($data && !empty($data)) {
             $firstLine = current($data);

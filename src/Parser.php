@@ -2,11 +2,17 @@
 
 namespace CsvParser;
 
+use CsvParser\Middleware\StringReaderMiddlewareInterface;
+use CsvParser\Middleware\StringWriterMiddlewareInterface;
+
 class Parser
 {
-    public $fieldDelimiter = ',';
-    public $fieldEnclosure = '"';
-    public $lineDelimiter = "\n";
+    public string $fieldDelimiter = ',';
+    public string $fieldEnclosure = '"';
+    public string $lineDelimiter = "\n";
+
+    // Middleware stacks
+    public array $middleware = [];
 
     public function __construct($fieldDelimiter = null, $fieldEnclosure = null, $lineDelimiter = null)
     {
@@ -36,6 +42,11 @@ class Parser
     public function fromFile($file)
     {
         return Reader\FileReader::read($this, $file);
+    }
+
+    public function fromStream($file)
+    {
+        return Reader\StreamReader::read($this, $file);
     }
 
     protected static function instanceFromOptions(?array $options = null)
@@ -82,7 +93,7 @@ class Parser
     public static function stream($file, ?array $options = null)
     {
         $parser = static::instanceFromOptions($options);
-        return Reader\StreamReader::read($parser, $file);
+        return $parser->fromStream($file);
     }
 
     public static function write($data, $filename, ?array $options = null)
@@ -95,5 +106,61 @@ class Parser
     {
         $parser = static::instanceFromOptions($options);
         return $parser->toStream($resource, $keys, $callback);
+    }
+
+    // Middleware
+    public function addMiddleware($middleware)
+    {
+        $this->middleware[] = $middleware;
+    }
+
+    protected function getMiddlewareByType($interface)
+    {
+        $filtered = [];
+        foreach ($this->middleware as $middleware) {
+            if ($middleware instanceof $interface) {
+                $filtered[] = $middleware;
+            }
+        }
+        return $filtered;
+    }
+
+    // String reader and writer middleware, applies to all string based readers and writers (string, file & stream)
+    public function applyStringReaderMiddleware(?array $data): ?array
+    {
+        if (empty($data)) {
+            return $data;
+        }
+
+        $stringReaderMiddleware = $this->getMiddlewareByType(StringReaderMiddlewareInterface::class);
+        if (empty($stringReaderMiddleware)) {
+            return $data;
+        }
+        foreach ($data as $index => $row) {
+            foreach ($stringReaderMiddleware as $middleware) {
+                $row = $middleware->read($row, ['index' => $index]);
+            }
+            $data[$index] = $row;
+        }
+        return $data;
+    }
+
+    public function applyStringWriterMiddleware(?array $data): ?array
+    {
+        if (empty($data)) {
+            return $data;
+        }
+
+        $stringWriterMiddleware = $this->getMiddlewareByType(StringWriterMiddlewareInterface::class);
+        if (empty($stringWriterMiddleware)) {
+            return $data;
+        }
+        foreach ($data as $index => $row) {
+            foreach ($stringWriterMiddleware as $middleware) {
+                $row = $middleware->write($row, ['index' => $index]);
+            }
+            $data[$index] = $row;
+        }
+        return $data;
     }
 }
