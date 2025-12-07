@@ -49,10 +49,9 @@ class FileReaderEncodingTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(2, count($rows));
         $this->assertEquals('Product A', $rows[0]['Name']);
-        // Note: Euro symbol in ISO-8859-15 may be converted to ¤ if detected as ISO-8859-1
-        $this->assertStringContainsString('25.50', $rows[0]['Price']);
+        $this->assertStringContainsString('€25.50', $rows[0]['Price']);
         $this->assertEquals('Européen', $rows[0]['Notes']);
-        $this->assertStringContainsString('30.00', $rows[1]['Price']);
+        $this->assertStringContainsString('€30.00', $rows[1]['Price']);
         $this->assertEquals('Français', $rows[1]['Notes']);
     }
 
@@ -64,7 +63,7 @@ class FileReaderEncodingTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(2, count($rows));
         $this->assertEquals('Smith', $rows[0]['Name']);
-        $this->assertStringContainsString('dash', $rows[0]['Notes']);
+        $this->assertStringContainsString('–dash–', $rows[0]['Notes']);
         $this->assertEquals('García', $rows[1]['Name']);
         $this->assertEquals('López & Hernández', $rows[1]['Company']);
         $this->assertStringContainsString('™', $rows[1]['Notes']); // trademark
