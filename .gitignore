@@ -3,3 +3,4 @@ tmp/*
 !tmp/.gitkeep
 *.sublime-*
 .phpunit.result.cache
+*.~lock.*
