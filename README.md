@@ -210,6 +210,33 @@ To run the tests, you can use PHPUnit. Make sure you have PHPUnit installed and 
 phpunit .
 ```
 
+## Middleware
+
+You can use middleware to modify data as it is read or written.
+
+### Available Middleware
+
+- **FormulaInjectionMiddleware**: Protects against formula injection (CSV Injection) by escaping characters that could be interpreted as formulas.
+- **DatetimeMiddleware**: Detects dates and adds an escape character so that spreadsheet apps don't auto-convert formats.
+
+### Usage
+
+```php
+use CsvParser\Parser;
+use CsvParser\Middleware\FormulaInjectionMiddleware;
+use CsvParser\Middleware\DatetimeMiddleware;
+
+$parser = new Parser();
+
+// Add middleware
+$parser->addMiddleware(new FormulaInjectionMiddleware());
+$parser->addMiddleware(new DatetimeMiddleware());
+
+// ... use parser as normal
+```
+
+See the [`MiddlewareTest.php`](tests/MiddlewareTest.php) file for more usage examples.
+
 
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fstilliard%2FCsvParser.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fstilliard%2FCsvParser?ref=badge_large)
