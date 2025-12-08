@@ -3,7 +3,7 @@
 namespace CsvParser\Middleware;
 
 /**
- * Middleware trait to escape cells, such prevent formatting issues or protect against formula injection attacks
+ * Middleware trait to escape cells, such as preventing formatting issues or protect against formula injection attacks
  */
 trait EscapeMiddlewareTrait
 {

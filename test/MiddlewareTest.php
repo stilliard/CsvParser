@@ -13,21 +13,32 @@ class MiddlewareTest extends PHPUnit_Framework_TestCase
         $parser->addMiddleware(new DatetimeMiddleware);
 
         $orig = [
-            ['Name' => 'Alice', 'Comment' => '=HYPERLINK("http://malicious.com","Click me!")', 'Date' => '2024-01-01'],
-            ['Name' => 'Bob', 'Comment' => 'Hello world!', 'Date' => '2024-02-15 12:30:00'],
+            [
+                'Name' => 'Alice',
+                'Comment' => '=HYPERLINK("http://malicious.com","Click me!")',
+                'Date' => '2024-01-01',
+                'Num' => 123,
+            ],
+            [
+                'Name' => 'Bob',
+                'Comment' => 'Hello ol\' world!',
+                'Date' => '2024-02-15 12:30:00',
+                'Num' => '	+456',
+            ],
         ];
         $csv = $parser->fromArray($orig);
 
         // check that the formula injection was escaped on write
         $safe = <<<CSV
-        "Name","Comment","Date"
-        "Alice","'=HYPERLINK(""http://malicious.com"",""Click me!"")","'2024-01-01"
-        "Bob","Hello world!","'2024-02-15 12:30:00"
+        "Name","Comment","Date","Num"
+        "Alice","'=HYPERLINK(""http://malicious.com"",""Click me!"")","'2024-01-01","123"
+        "Bob","Hello ol' world!","'2024-02-15 12:30:00","'	+456"
         CSV;
         $this->assertSame($safe, $parser->toString($csv));
 
         // check that the formula injection was unescaped on read
         $csv2 = $parser->fromString($safe);
+        $orig[0]['Num'] = (string) $orig[0]['Num']; // when we parse back from string, numbers become strings, this is intended
         $this->assertSame($orig, $csv2->getData());
     }
 

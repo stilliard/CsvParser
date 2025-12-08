@@ -23,6 +23,6 @@ class FormulaInjectionMiddleware implements StringWriterMiddlewareInterface, Str
         }
 
         $this->writePattern = '/^\s*[' . preg_quote($this->injectionCharacters, '/') . ']/';
-        $this->readPattern = '/^' . preg_quote($this->escapeChar, '/') . '[' . preg_quote($this->injectionCharacters, '/') . ']/';
+        $this->readPattern = '/^' . preg_quote($this->escapeChar, '/') . '\s*[' . preg_quote($this->injectionCharacters, '/') . ']/';
     }
 }
