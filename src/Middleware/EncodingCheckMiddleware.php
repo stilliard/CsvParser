@@ -39,7 +39,7 @@ class EncodingCheckMiddleware implements StringReaderMiddlewareInterface
             }
 
             if (!mb_check_encoding($value, $this->encoding)) {
-                $this->handleInvalidEncoding($row, $key, $value);
+                $this->handleInvalidEncoding($row, $key, $value, $context['index'] ?? 0);
             } elseif ($this->fixMojibake) {
                 $this->handleMojibake($row, $key, $value);
             }
@@ -60,11 +60,11 @@ class EncodingCheckMiddleware implements StringReaderMiddlewareInterface
         }
     }
 
-    protected function handleInvalidEncoding(array &$row, $key, $value): void
+    protected function handleInvalidEncoding(array &$row, $key, $value, $line): void
     {
         switch ($this->action) {
             case 'throw':
-                throw new RuntimeException("Invalid encoding detected in row for key '$key'. Expected {$this->encoding}.");
+                throw new RuntimeException("Invalid encoding detected in row for key '{$key}' on line {$line}. Expected {$this->encoding}.");
             case 'fix':
                 // Try to fix by converting from fallback encoding
                 $fixed = mb_convert_encoding($value, $this->encoding, $this->fallbackEncoding);
@@ -78,7 +78,7 @@ class EncodingCheckMiddleware implements StringReaderMiddlewareInterface
                 break;
             case 'warn':
             default:
-                trigger_error("Invalid encoding detected in row for key '$key'. Expected {$this->encoding}.", E_USER_WARNING);
+                trigger_error("Invalid encoding detected in row for key '{$key}' on line {$line}. Expected {$this->encoding}.", E_USER_WARNING);
                 break;
         }
     }
