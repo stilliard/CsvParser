@@ -18,10 +18,10 @@ class EncodingCheckMiddleware implements StringReaderMiddlewareInterface
             $this->encoding = $options['encoding'];
         }
         if (isset($options['action'])) {
+            $this->action = $options['action'];
             if (! in_array($this->action, ['warn', 'throw', 'fix'])) {
                 throw new InvalidArgumentException("Invalid action '{$this->action}'. Must be one of: warn, throw, fix");
             }
-            $this->action = $options['action'];
         }
         if (isset($options['fallbackEncoding'])) {
             $this->fallbackEncoding = $options['fallbackEncoding'];
