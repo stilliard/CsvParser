@@ -9,7 +9,7 @@ namespace CsvParser\Middleware;
  */
 class DatetimeMiddleware implements StringWriterMiddlewareInterface, StringReaderMiddlewareInterface
 {
-    protected string $pattern = '\d{4}-\d{2}-\d{2}( \d{2}:\d{2}:\d{2})?'; // e.g. 2023-10-15 or 2023-10-15 14:30:00
+    protected string $pattern = '\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}:\d{2})?'; // e.g. 2023-10-15 or 2023-10-15 14:30:00 or 2023-10-15T14:30:00
 
     use EscapeMiddlewareTrait;
 
