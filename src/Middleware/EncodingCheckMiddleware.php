@@ -10,6 +10,7 @@ class EncodingCheckMiddleware implements StringReaderMiddlewareInterface
     protected string $encoding = 'UTF-8';
     protected string $action = 'warn'; // warn, throw, fix
     protected string $fallbackEncoding = 'Windows-1252';
+    protected bool $fixMojibake = false;
 
     public function __construct(array $options = [])
     {
@@ -25,16 +26,38 @@ class EncodingCheckMiddleware implements StringReaderMiddlewareInterface
         if (isset($options['fallbackEncoding'])) {
             $this->fallbackEncoding = $options['fallbackEncoding'];
         }
+        if (isset($options['fixMojibake'])) {
+            $this->fixMojibake = (bool) $options['fixMojibake'];
+        }
     }
 
     public function read(array $row, array $context): array
     {
         foreach ($row as $key => $value) {
-            if (is_string($value) && !mb_check_encoding($value, $this->encoding)) {
+            if (!is_string($value)) {
+                continue;
+            }
+
+            if (!mb_check_encoding($value, $this->encoding)) {
                 $this->handleInvalidEncoding($row, $key, $value);
+            } elseif ($this->fixMojibake) {
+                $this->handleMojibake($row, $key, $value);
             }
         }
         return $row;
+    }
+
+    protected function handleMojibake(array &$row, $key, $value): void
+    {
+        // Try to convert the string "back" to the fallback encoding
+        // (treating the current UTF-8 bytes as if they were the result of a bad conversion)
+        $fixed = mb_convert_encoding($value, $this->fallbackEncoding, $this->encoding);
+
+        // Check if the result is valid UTF-8
+        // If the conversion worked and resulted in valid UTF-8, it was likely double-encoded.
+        if (mb_check_encoding($fixed, $this->encoding) && $fixed !== $value) {
+            $row[$key] = $fixed;
+        }
     }
 
     protected function handleInvalidEncoding(array &$row, $key, $value): void

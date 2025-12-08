@@ -170,4 +170,36 @@ CSV;
 
         $this->assertEquals("Valid UTF-8: é", $rows[0]['col1']);
     }
+
+    public function testEncodingCheckMiddlewareFixesMojibake()
+    {
+        // "é" (UTF-8: C3 A9) interpreted as Windows-1252 becomes "Ã©"
+        // "Ã©" in UTF-8 is C3 83 C2 A9
+        $mojibake = "\xC3\x83\xC2\xA9";
+        $csvContent = "col1\n{$mojibake}";
+
+        // 1. Verify it stays as mojibake without the fix option
+        $parser = new Parser();
+        $parser->addMiddleware(new EncodingCheckMiddleware(['action' => 'warn'])); // default doesn't fix mojibake
+
+        // Suppress warning for this test part if any (though mojibake is valid utf8 so shouldn't warn)
+        $csv = $parser->fromString($csvContent);
+        $rows = $csv->getData();
+        $this->assertEquals($mojibake, $rows[0]['col1']);
+
+        // 2. Verify it gets fixed with fixMojibake = true
+        $parser = new Parser();
+        $parser->addMiddleware(new EncodingCheckMiddleware([
+            'action' => 'warn',
+            'fixMojibake' => true,
+            'fallbackEncoding' => 'Windows-1252'
+        ]));
+
+        $csv = $parser->fromString($csvContent);
+        $rows = $csv->getData();
+
+        $this->assertEquals("é", $rows[0]['col1']);
+        $this->assertEquals("\xC3\xA9", $rows[0]['col1']); // Check correct byte sequence
+        $this->assertTrue(mb_check_encoding($rows[0]['col1'], 'UTF-8'));
+    }
 }
