@@ -9,7 +9,7 @@ namespace CsvParser\Middleware;
  */
 class FormulaInjectionMiddleware implements StringWriterMiddlewareInterface, StringReaderMiddlewareInterface
 {
-    protected string $injectionCharacters = '=+-@';
+    protected string $injectionCharacters = '=+-@'; // \s* also covered in regex below
 
     use EscapeMiddlewareTrait;
 
