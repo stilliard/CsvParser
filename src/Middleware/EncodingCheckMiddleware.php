@@ -2,6 +2,9 @@
 
 namespace CsvParser\Middleware;
 
+use InvalidArgumentException;
+use RuntimeException;
+
 class EncodingCheckMiddleware implements StringReaderMiddlewareInterface
 {
     protected string $encoding = 'UTF-8';
@@ -14,6 +17,9 @@ class EncodingCheckMiddleware implements StringReaderMiddlewareInterface
             $this->encoding = $options['encoding'];
         }
         if (isset($options['action'])) {
+            if (! in_array($this->action, ['warn', 'throw', 'fix'])) {
+                throw new InvalidArgumentException("Invalid action '{$this->action}'. Must be one of: warn, throw, fix");
+            }
             $this->action = $options['action'];
         }
         if (isset($options['fallbackEncoding'])) {
@@ -35,7 +41,7 @@ class EncodingCheckMiddleware implements StringReaderMiddlewareInterface
     {
         switch ($this->action) {
             case 'throw':
-                throw new \RuntimeException("Invalid encoding detected in row for key '$key'. Expected {$this->encoding}.");
+                throw new RuntimeException("Invalid encoding detected in row for key '$key'. Expected {$this->encoding}.");
             case 'fix':
                 // Try to fix by converting from fallback encoding
                 $fixed = mb_convert_encoding($value, $this->encoding, $this->fallbackEncoding);
