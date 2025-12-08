@@ -14,15 +14,15 @@ class Parser
     // Middleware stacks
     public array $middleware = [];
 
-    public function __construct($fieldDelimiter = null, $fieldEnclosure = null, $lineDelimiter = null)
+    public function __construct(?string $fieldDelimiter = null, ?string $fieldEnclosure = null, ?string $lineDelimiter = null)
     {
-        if ( ! is_null($fieldDelimiter)) {
+        if (! is_null($fieldDelimiter)) {
             $this->fieldDelimiter = $fieldDelimiter;
         }
-        if ( ! is_null($fieldEnclosure)) {
+        if (! is_null($fieldEnclosure)) {
             $this->fieldEnclosure = $fieldEnclosure;
         }
-        if ( ! is_null($lineDelimiter)) {
+        if (! is_null($lineDelimiter)) {
             $this->lineDelimiter = $lineDelimiter;
         }
     }
@@ -114,7 +114,7 @@ class Parser
         $this->middleware[] = $middleware;
     }
 
-    public function getMiddlewareByType($interface): array
+    public function getMiddlewareByType(string $interface): array
     {
         $filtered = [];
         foreach ($this->middleware as $middleware) {
