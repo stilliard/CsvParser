@@ -52,6 +52,7 @@ class StringReader implements ReaderInterface
             }
         }
 
+        $data = $parser->applyStringReaderMiddleware($data);
         return new \CsvParser\Csv($data);
     }
 }

@@ -26,15 +26,21 @@ class StreamWriter
 
         // Case 1: Generator or iterable returned
         if (is_iterable($data) && ! is_array($data)) {
+            $index = 0;
             foreach ($data as $row) {
+                $row = $parser->applyStringWriterMiddlewareToRow($row, $index);
                 $writeRow($row);
+                $index++;
             }
         }
         // Case 2: Pull-style row returned; loop until false/null
         else {
+            $index = 0;
             while ($data) {
+                $data = $parser->applyStringWriterMiddlewareToRow($data, $index);
                 $writeRow($data);
                 $data = $callback();
+                $index++;
             }
         }
     }

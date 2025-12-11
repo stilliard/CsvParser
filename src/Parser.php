@@ -2,21 +2,27 @@
 
 namespace CsvParser;
 
+use CsvParser\Middleware\StringReaderMiddlewareInterface;
+use CsvParser\Middleware\StringWriterMiddlewareInterface;
+
 class Parser
 {
-    public $fieldDelimiter = ',';
-    public $fieldEnclosure = '"';
-    public $lineDelimiter = "\n";
+    public string $fieldDelimiter = ',';
+    public string $fieldEnclosure = '"';
+    public string $lineDelimiter = "\n";
 
-    public function __construct($fieldDelimiter = null, $fieldEnclosure = null, $lineDelimiter = null)
+    // Middleware stacks
+    public array $middleware = [];
+
+    public function __construct(?string $fieldDelimiter = null, ?string $fieldEnclosure = null, ?string $lineDelimiter = null)
     {
-        if ( ! is_null($fieldDelimiter)) {
+        if (! is_null($fieldDelimiter)) {
             $this->fieldDelimiter = $fieldDelimiter;
         }
-        if ( ! is_null($fieldEnclosure)) {
+        if (! is_null($fieldEnclosure)) {
             $this->fieldEnclosure = $fieldEnclosure;
         }
-        if ( ! is_null($lineDelimiter)) {
+        if (! is_null($lineDelimiter)) {
             $this->lineDelimiter = $lineDelimiter;
         }
     }
@@ -36,6 +42,11 @@ class Parser
     public function fromFile($file)
     {
         return Reader\FileReader::read($this, $file);
+    }
+
+    public function fromStream($file)
+    {
+        return Reader\StreamReader::read($this, $file);
     }
 
     protected static function instanceFromOptions(?array $options = null)
@@ -82,7 +93,7 @@ class Parser
     public static function stream($file, ?array $options = null)
     {
         $parser = static::instanceFromOptions($options);
-        return Reader\StreamReader::read($parser, $file);
+        return $parser->fromStream($file);
     }
 
     public static function write($data, $filename, ?array $options = null)
@@ -95,5 +106,69 @@ class Parser
     {
         $parser = static::instanceFromOptions($options);
         return $parser->toStream($resource, $keys, $callback);
+    }
+
+    // Middleware
+    public function addMiddleware($middleware)
+    {
+        $this->middleware[] = $middleware;
+    }
+
+    public function getMiddlewareByType(string $interface): array
+    {
+        $filtered = [];
+        foreach ($this->middleware as $middleware) {
+            if ($middleware instanceof $interface) {
+                $filtered[] = $middleware;
+            }
+        }
+        return $filtered;
+    }
+
+    // Generic middleware application methods
+    protected function applyMiddleware(?array $data, string $interfaceClass, string $method): ?array
+    {
+        if (empty($data)) {
+            return $data;
+        }
+
+        $middlewares = $this->getMiddlewareByType($interfaceClass);
+        foreach ($data as $index => $row) {
+            foreach ($middlewares as $middleware) {
+                $row = $middleware->$method($row, ['index' => $index]);
+            }
+            $data[$index] = $row;
+        }
+        return $data;
+    }
+
+    protected function applyMiddlewareToRow(array $row, int $index, string $interfaceClass, string $method): array
+    {
+        $middlewares = $this->getMiddlewareByType($interfaceClass);
+        foreach ($middlewares as $middleware) {
+            $row = $middleware->$method($row, ['index' => $index]);
+        }
+        return $row;
+    }
+
+    // String reader and writer middleware convenience methods
+    public function applyStringReaderMiddleware(?array $data): ?array
+    {
+        return $this->applyMiddleware($data, StringReaderMiddlewareInterface::class, 'read');
+    }
+
+    public function applyStringWriterMiddleware(?array $data): ?array
+    {
+        return $this->applyMiddleware($data, StringWriterMiddlewareInterface::class, 'write');
+    }
+
+    public function applyStringReaderMiddlewareToRow(array $row, int $index): array
+    {
+        return $this->applyMiddlewareToRow($row, $index, StringReaderMiddlewareInterface::class, 'read');
+    }
+
+    public function applyStringWriterMiddlewareToRow(array $row, int $index): array
+    {
+        return $this->applyMiddlewareToRow($row, $index, StringWriterMiddlewareInterface::class, 'write');
     }
 }
