@@ -155,7 +155,8 @@ CSV;
         $rows = $csv->getData();
 
         $this->assertEquals("é", $rows[0]['col2']); // Should be UTF-8 'é'
-        $this->assertEquals("\xC3\xA9", $rows[0]['col2']); // Check correct byte sequence
+        $this->assertEquals("\xC3\xA9", $rows[0]['col2']); // Check correct byte sequence (same as above but for additional clarity)
+        $this->assertEquals("\u{00E9}", $rows[0]['col2']); // Check correct character as unicode (as above)
         $this->assertTrue(mb_check_encoding($rows[0]['col2'], 'UTF-8'));
     }
 
@@ -199,7 +200,8 @@ CSV;
         $rows = $csv->getData();
 
         $this->assertEquals("é", $rows[0]['col1']);
-        $this->assertEquals("\xC3\xA9", $rows[0]['col1']); // Check correct byte sequence
+        $this->assertEquals("\xC3\xA9", $rows[0]['col1']); // Check correct byte sequence (same as above but for additional clarity)
+        $this->assertEquals("\u{00E9}", $rows[0]['col1']); // Check correct character as unicode (as above)
         $this->assertTrue(mb_check_encoding($rows[0]['col1'], 'UTF-8'));
     }
 }
