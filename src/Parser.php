@@ -109,9 +109,11 @@ class Parser
     }
 
     // Middleware
-    public function addMiddleware($middleware)
+    public function addMiddleware(...$middleware)
     {
-        $this->middleware[] = $middleware;
+        foreach ($middleware as $m) {
+            $this->middleware[] = $m;
+        }
     }
 
     public function getMiddlewareByType(string $interface): array
