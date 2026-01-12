@@ -4,6 +4,7 @@ use CsvParser\Parser;
 use CsvParser\Middleware\FormulaInjectionMiddleware;
 use CsvParser\Middleware\DatetimeMiddleware;
 use CsvParser\Middleware\EncodingCheckMiddleware;
+use CsvParser\Middleware\TextFieldMiddleware;
 
 class MiddlewareTest extends PHPUnit_Framework_TestCase
 {
@@ -203,5 +204,58 @@ CSV;
         $this->assertEquals("\xC3\xA9", $rows[0]['col1']); // Check correct byte sequence (same as above but for additional clarity)
         $this->assertEquals("\u{00E9}", $rows[0]['col1']); // Check correct character as unicode (as above)
         $this->assertTrue(mb_check_encoding($rows[0]['col1'], 'UTF-8'));
+    }
+
+    public function testTextFieldMiddleware()
+    {
+        $parser = new Parser();
+        $parser->addMiddleware(new TextFieldMiddleware([
+            'fields' => ['long_id', 'phone_number'],
+        ]));
+
+        $orig = [
+            [
+                'name' => 'Alice',
+                'long_id' => 1234567890123456789,
+                'phone_number' => 1234567890,
+                'email' => 'alice@email.test',
+            ],
+            [
+                'name' => 'Bob',
+                'long_id' => '09876543210987654321',
+                'phone_number' => '0987654321',
+                'email' => 'bob@email.test',
+            ],
+        ];
+        $csv = $parser->fromArray($orig);
+
+        $safe = <<<CSV
+        "name","long_id","phone_number","email"
+        "Alice","'1234567890123456789","'1234567890","alice@email.test"
+        "Bob","'09876543210987654321","'0987654321","bob@email.test"
+        CSV;
+        $this->assertSame($safe, $parser->toString($csv));
+
+        // and back again
+        $csv2 = $parser->fromString($safe);
+        $orig[0]['long_id'] = (string) $orig[0]['long_id']; // fix to string as when we read from CSV all values become strings
+        $orig[0]['phone_number'] = (string) $orig[0]['phone_number'];
+        $this->assertSame($orig, $csv2->getData());
+
+        // and now with the stream reader/writer
+        $tempFile = tempnam(sys_get_temp_dir(), 'csv_test_');
+        $resource = fopen($tempFile, 'w');
+        $index = 0;
+        $parser->toStream($resource, ['name', 'long_id', 'phone_number', 'email'], function() use ($orig, &$index) {
+            return $index < count($orig) ? $orig[$index++] : null;
+        });
+        fclose($resource);
+        $this->assertSame($safe . "\n", file_get_contents($tempFile));
+
+        $results = [];
+        foreach ($parser->fromStream($tempFile) as $row) {
+            $results[] = $row;
+        }
+        $this->assertSame($orig, $results);
     }
 }

@@ -9,7 +9,7 @@ Quickly take in and output csv formats.
 
 ## Install
 ```bash
-composer require stilliard/csvparser 1.4.1
+composer require stilliard/csvparser 1.4.2
 ```
 
 ## Example usage:
@@ -226,13 +226,21 @@ You can use middleware to modify data as it is read or written.
 use CsvParser\Parser;
 use CsvParser\Middleware\FormulaInjectionMiddleware;
 use CsvParser\Middleware\DatetimeMiddleware;
+use CsvParser\Middleware\TextFieldMiddleware;
 use CsvParser\Middleware\EncodingCheckMiddleware;
 
 $parser = new Parser();
 
-// Add middleware
+// Protect against CSV formula injection
 $parser->addMiddleware(new FormulaInjectionMiddleware());
+
+// Escape date/datetime fields to prevent auto-conversion
 $parser->addMiddleware(new DatetimeMiddleware());
+
+// Escape specific text fields
+$parser->addMiddleware(new TextFieldMiddleware([
+    'fields' => ['long_id', 'phone_number'],
+]);
 
 // Encoding check options:
 // action: 'warn' (default), 'throw', or 'fix'
