@@ -9,7 +9,7 @@ Quickly take in and output csv formats.
 
 ## Install
 ```bash
-composer require stilliard/csvparser 1.4.3
+composer require stilliard/csvparser 1.4.4
 ```
 
 ## Example usage:

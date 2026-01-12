@@ -259,4 +259,27 @@ CSV;
         }
         $this->assertSame($orig, $results);
     }
+
+    public function testTrimFieldMiddleware()
+    {
+        $parser = new Parser();
+        $parser->addMiddleware(new \CsvParser\Middleware\TrimFieldMiddleware([
+            'fields' => ['name', 'code'],
+        ]));
+
+        $orig = [
+            [
+                'name' => '  Alice  ',
+                'code' => "\t  ABC123 \n",
+                'email' => ' alice@email.test  ', // should not be trimmed as we didn't specify this field
+            ],
+        ];
+        $csv = $parser->fromArray($orig);
+
+        $safe = <<<CSV
+        "name","code","email"
+        "Alice","ABC123"," alice@email.test  "
+        CSV;
+        $this->assertSame($safe, $parser->toString($csv));
+    }
 }
