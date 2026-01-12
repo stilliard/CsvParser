@@ -3,6 +3,7 @@
 use CsvParser\Parser;
 use CsvParser\Middleware\FormulaInjectionMiddleware;
 use CsvParser\Middleware\DatetimeMiddleware;
+use CsvParser\Middleware\EncodingCheckMiddleware;
 
 class MiddlewareTest extends PHPUnit_Framework_TestCase
 {
@@ -99,5 +100,108 @@ CSV;
         // Cleanup
         unlink($tempFile);
         unlink($outputFile);
+    }
+
+    public function testEncodingCheckMiddlewareWarns()
+    {
+        $csvContent = "col1,col2\nValid,\x80Invalid";
+        $parser = new Parser();
+        $parser->addMiddleware(new EncodingCheckMiddleware(['action' => 'warn']));
+
+        $warnings = [];
+        set_error_handler(function ($errno, $errstr) use (&$warnings) {
+            $warnings[] = $errstr;
+            return true;
+        }, E_USER_WARNING);
+
+        try {
+            $parser->fromString($csvContent);
+        } finally {
+            restore_error_handler();
+        }
+
+        $this->assertCount(1, $warnings);
+        $this->assertStringContainsString("Invalid encoding detected", $warnings[0]);
+    }
+
+    public function testEncodingCheckMiddlewareThrows()
+    {
+        $csvContent = "col1,col2\nValid,\x80Invalid";
+        $parser = new Parser();
+        $parser->addMiddleware(new EncodingCheckMiddleware(['action' => 'throw']));
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage("Invalid encoding detected");
+
+        $parser->fromString($csvContent);
+    }
+
+    public function testEncodingCheckMiddlewareFixes()
+    {
+        $csvContent = "col1,col2\nValid,\xE9";
+
+        // 1. Verify broken without middleware
+        $parser = new Parser();
+        $csv = $parser->fromString($csvContent);
+        $rows = $csv->getData();
+        $this->assertFalse(mb_check_encoding($rows[0]['col2'], 'UTF-8'));
+        $this->assertNotEquals("é", $rows[0]['col2']); // it'd become � instead without the middleware fix
+
+        // 2. Verify fixed with middleware
+        $parser = new Parser();
+        $parser->addMiddleware(new EncodingCheckMiddleware(['action' => 'fix', 'fallbackEncoding' => 'ISO-8859-1']));
+
+        $csv = $parser->fromString($csvContent);
+        $rows = $csv->getData();
+
+        $this->assertEquals("é", $rows[0]['col2']); // Should be UTF-8 'é'
+        $this->assertEquals("\xC3\xA9", $rows[0]['col2']); // Check correct byte sequence (same as above but for additional clarity)
+        $this->assertEquals("\u{00E9}", $rows[0]['col2']); // Check correct character as unicode (as above)
+        $this->assertTrue(mb_check_encoding($rows[0]['col2'], 'UTF-8'));
+    }
+
+    public function testEncodingCheckMiddlewareValidPasses()
+    {
+        $csvContent = "col1\nValid UTF-8: é";
+        $parser = new Parser();
+        $parser->addMiddleware(new EncodingCheckMiddleware(['action' => 'throw']));
+
+        $csv = $parser->fromString($csvContent);
+        $rows = $csv->getData();
+
+        $this->assertEquals("Valid UTF-8: é", $rows[0]['col1']);
+    }
+
+    public function testEncodingCheckMiddlewareFixesMojibake()
+    {
+        // "é" (UTF-8: C3 A9) interpreted as Windows-1252 becomes "Ã©"
+        // "Ã©" in UTF-8 is C3 83 C2 A9
+        $mojibake = "\xC3\x83\xC2\xA9";
+        $csvContent = "col1\n{$mojibake}";
+
+        // 1. Verify it stays as mojibake without the fix option
+        $parser = new Parser();
+        $parser->addMiddleware(new EncodingCheckMiddleware(['action' => 'warn'])); // default doesn't fix mojibake
+
+        // Suppress warning for this test part if any (though mojibake is valid utf8 so shouldn't warn)
+        $csv = $parser->fromString($csvContent);
+        $rows = $csv->getData();
+        $this->assertEquals($mojibake, $rows[0]['col1']);
+
+        // 2. Verify it gets fixed with fixMojibake = true
+        $parser = new Parser();
+        $parser->addMiddleware(new EncodingCheckMiddleware([
+            'action' => 'warn',
+            'fixMojibake' => true,
+            'fallbackEncoding' => 'Windows-1252'
+        ]));
+
+        $csv = $parser->fromString($csvContent);
+        $rows = $csv->getData();
+
+        $this->assertEquals("é", $rows[0]['col1']);
+        $this->assertEquals("\xC3\xA9", $rows[0]['col1']); // Check correct byte sequence (same as above but for additional clarity)
+        $this->assertEquals("\u{00E9}", $rows[0]['col1']); // Check correct character as unicode (as above)
+        $this->assertTrue(mb_check_encoding($rows[0]['col1'], 'UTF-8'));
     }
 }

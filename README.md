@@ -218,6 +218,7 @@ You can use middleware to modify data as it is read or written.
 
 - **FormulaInjectionMiddleware**: Protects against formula injection (CSV Injection) by escaping characters that could be interpreted as formulas.
 - **DatetimeMiddleware**: Detects dates and adds an escape character so that spreadsheet apps don't auto-convert formats.
+- **EncodingCheckMiddleware**: Validates input encoding (default UTF-8) and can warn, throw exception, or attempt to fix invalid encoding. It can also fix "mojibake" (double-encoded text).
 
 ### Usage
 
@@ -225,12 +226,21 @@ You can use middleware to modify data as it is read or written.
 use CsvParser\Parser;
 use CsvParser\Middleware\FormulaInjectionMiddleware;
 use CsvParser\Middleware\DatetimeMiddleware;
+use CsvParser\Middleware\EncodingCheckMiddleware;
 
 $parser = new Parser();
 
 // Add middleware
 $parser->addMiddleware(new FormulaInjectionMiddleware());
 $parser->addMiddleware(new DatetimeMiddleware());
+
+// Encoding check options:
+// action: 'warn' (default), 'throw', or 'fix'
+// fixMojibake: true/false (default false) - attempts to fix double-encoded text (e.g. Ã© -> é)
+$parser->addMiddleware(new EncodingCheckMiddleware([
+    'action' => 'warn',
+    'fixMojibake' => true,
+]));
 
 // ... use parser as normal
 ```
