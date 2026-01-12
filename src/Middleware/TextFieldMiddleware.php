@@ -8,7 +8,8 @@ namespace CsvParser\Middleware;
  */
 class TextFieldMiddleware implements StringWriterMiddlewareInterface, StringReaderMiddlewareInterface
 {
-    protected array $fields = [];
+    use FieldBasedMiddlewareTrait;
+
     protected string $escapeChar = "'";
 
     public function __construct(array $options = [])
@@ -23,21 +24,13 @@ class TextFieldMiddleware implements StringWriterMiddlewareInterface, StringRead
 
     public function write(array $row, array $context): array
     {
-        foreach ($this->fields as $field) {
-            if (isset($row[$field]) && $row[$field]) {
-                $row[$field] = $this->escapeChar . $row[$field];
-            }
-        }
-        return $row;
+        return $this->processFields($row, $context, fn($value)
+            => $value ? $this->escapeChar . $value : $value);
     }
 
     public function read(array $row, array $context): array
     {
-        foreach ($this->fields as $field) {
-            if (isset($row[$field]) && substr($row[$field], 0, 1) === $this->escapeChar) {
-                $row[$field] = substr($row[$field], 1);
-            }
-        }
-        return $row;
+        return $this->processFields($row, $context, fn($value)
+            => (isset($value[0]) && $value[0] === $this->escapeChar) ? substr($value, 1) : $value);
     }
 }

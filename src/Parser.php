@@ -128,7 +128,7 @@ class Parser
     }
 
     // Generic middleware application methods
-    protected function applyMiddleware(?array $data, string $interfaceClass, string $method): ?array
+    protected function applyMiddleware(?array $data, array $headings, string $interfaceClass, string $method): ?array
     {
         if (empty($data)) {
             return $data;
@@ -137,40 +137,46 @@ class Parser
         $middlewares = $this->getMiddlewareByType($interfaceClass);
         foreach ($data as $index => $row) {
             foreach ($middlewares as $middleware) {
-                $row = $middleware->$method($row, ['index' => $index]);
+                $row = $middleware->$method($row, [
+                    'index' => $index,
+                    'headings' => $headings,
+                ]);
             }
             $data[$index] = $row;
         }
         return $data;
     }
 
-    protected function applyMiddlewareToRow(array $row, int $index, string $interfaceClass, string $method): array
+    protected function applyMiddlewareToRow(array $row, int $index, array $headings, string $interfaceClass, string $method): array
     {
         $middlewares = $this->getMiddlewareByType($interfaceClass);
         foreach ($middlewares as $middleware) {
-            $row = $middleware->$method($row, ['index' => $index]);
+            $row = $middleware->$method($row, [
+                'index' => $index,
+                'headings' => $headings,
+            ]);
         }
         return $row;
     }
 
     // String reader and writer middleware convenience methods
-    public function applyStringReaderMiddleware(?array $data): ?array
+    public function applyStringReaderMiddleware(?array $data, array $headings): ?array
     {
-        return $this->applyMiddleware($data, StringReaderMiddlewareInterface::class, 'read');
+        return $this->applyMiddleware($data, $headings, StringReaderMiddlewareInterface::class, 'read');
     }
 
-    public function applyStringWriterMiddleware(?array $data): ?array
+    public function applyStringWriterMiddleware(?array $data, array $headings): ?array
     {
-        return $this->applyMiddleware($data, StringWriterMiddlewareInterface::class, 'write');
+        return $this->applyMiddleware($data, $headings, StringWriterMiddlewareInterface::class, 'write');
     }
 
-    public function applyStringReaderMiddlewareToRow(array $row, int $index): array
+    public function applyStringReaderMiddlewareToRow(array $row, int $index, array $headings): array
     {
-        return $this->applyMiddlewareToRow($row, $index, StringReaderMiddlewareInterface::class, 'read');
+        return $this->applyMiddlewareToRow($row, $index, $headings, StringReaderMiddlewareInterface::class, 'read');
     }
 
-    public function applyStringWriterMiddlewareToRow(array $row, int $index): array
+    public function applyStringWriterMiddlewareToRow(array $row, int $index, array $headings): array
     {
-        return $this->applyMiddlewareToRow($row, $index, StringWriterMiddlewareInterface::class, 'write');
+        return $this->applyMiddlewareToRow($row, $index, $headings, StringWriterMiddlewareInterface::class, 'write');
     }
 }

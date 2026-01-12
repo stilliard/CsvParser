@@ -28,7 +28,7 @@ class StreamWriter
         if (is_iterable($data) && ! is_array($data)) {
             $index = 0;
             foreach ($data as $row) {
-                $row = $parser->applyStringWriterMiddlewareToRow($row, $index);
+                $row = $parser->applyStringWriterMiddlewareToRow($row, $index, $keys);
                 $writeRow($row);
                 $index++;
             }
@@ -37,7 +37,7 @@ class StreamWriter
         else {
             $index = 0;
             while ($data) {
-                $data = $parser->applyStringWriterMiddlewareToRow($data, $index);
+                $data = $parser->applyStringWriterMiddlewareToRow($data, $index, $keys);
                 $writeRow($data);
                 $data = $callback();
                 $index++;

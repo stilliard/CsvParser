@@ -246,8 +246,9 @@ CSV;
         $tempFile = tempnam(sys_get_temp_dir(), 'csv_test_');
         $resource = fopen($tempFile, 'w');
         $index = 0;
-        $parser->toStream($resource, ['name', 'long_id', 'phone_number', 'email'], function() use ($orig, &$index) {
-            return $index < count($orig) ? $orig[$index++] : null;
+        $origIndexed = array_values($orig);
+        $parser->toStream($resource, ['name', 'long_id', 'phone_number', 'email'], function() use ($origIndexed, &$index) {
+            return $index < count($origIndexed) ? $origIndexed[$index++] : null;
         });
         fclose($resource);
         $this->assertSame($safe . "\n", file_get_contents($tempFile));

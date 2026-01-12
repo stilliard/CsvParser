@@ -23,7 +23,7 @@ class StreamReader implements ReaderInterface
         $index = 0;
         while (($row = fgetcsv($handle, 0, $parser->fieldDelimiter, $parser->fieldEnclosure)) !== false) {
             $combined = array_combine($headings, $row);
-            $combined = $parser->applyStringReaderMiddlewareToRow($combined, $index);
+            $combined = $parser->applyStringReaderMiddlewareToRow($combined, $index, $headings);
             yield $combined;
             $index++;
         }
