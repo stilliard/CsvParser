@@ -245,7 +245,7 @@ $parser->addMiddleware(new EncodingCheckMiddleware([
 // ... use parser as normal
 ```
 
-See the [`MiddlewareTest.php`](tests/MiddlewareTest.php) file for more usage examples.
+See the [`MiddlewareTest.php`](test/MiddlewareTest.php) file for more usage examples.
 
 
 ## License
