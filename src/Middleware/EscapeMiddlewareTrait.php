@@ -11,22 +11,22 @@ trait EscapeMiddlewareTrait
     protected string $readPattern;
     protected string $escapeChar = "'";
 
-    protected function needsEscaping(string $cell): bool
+    protected function needsEscaping(?string $cell): bool
     {
-        return !! preg_match($this->writePattern, $cell);
+        return !! preg_match($this->writePattern, $cell ?? '');
     }
-    protected function escape(string $cell): string
+    protected function escape(?string $cell): string
     {
-        return $this->escapeChar . $cell;
+        return $this->escapeChar . ($cell ?? '');
     }
 
-    protected function isEscaped(string $cell): bool
+    protected function isEscaped(?string $cell): bool
     {
-        return !! preg_match($this->readPattern, $cell);
+        return !! preg_match($this->readPattern, $cell ?? '');
     }
-    protected function unescape(string $cell): string
+    protected function unescape(?string $cell): string
     {
-        return substr($cell, 1);
+        return substr($cell ?? '', 1);
     }
 
     // when writing out a row, escape any cells that could be formula injections
