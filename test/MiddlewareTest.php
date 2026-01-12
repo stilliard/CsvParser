@@ -223,7 +223,7 @@ CSV;
             [
                 'name' => 'Bob',
                 'long_id' => '09876543210987654321',
-                'phone_number' => '0987654321',
+                'phone_number' => '',
                 'email' => 'bob@email.test',
             ],
         ];
@@ -232,7 +232,7 @@ CSV;
         $safe = <<<CSV
         "name","long_id","phone_number","email"
         "Alice","'1234567890123456789","'1234567890","alice@email.test"
-        "Bob","'09876543210987654321","'0987654321","bob@email.test"
+        "Bob","'09876543210987654321","","bob@email.test"
         CSV;
         $this->assertSame($safe, $parser->toString($csv));
 

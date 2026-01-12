@@ -24,7 +24,7 @@ class TextFieldMiddleware implements StringWriterMiddlewareInterface, StringRead
     public function write(array $row, array $context): array
     {
         foreach ($this->fields as $field) {
-            if (isset($row[$field])) {
+            if (isset($row[$field]) && $row[$field]) {
                 $row[$field] = $this->escapeChar . $row[$field];
             }
         }
