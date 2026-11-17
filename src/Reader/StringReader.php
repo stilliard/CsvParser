@@ -8,6 +8,9 @@ class StringReader implements ReaderInterface
     {
         $data = array();
 
+        // remove UTF-8 BOM that Excel can add
+        $string = \CsvParser\Parser::stripBom($string);
+
         // Handle empty string case
         if (empty($string)) {
             return new \CsvParser\Csv($data);
