@@ -137,6 +137,22 @@ $csv->removeBlanks('email');
 
 ```
 
+## UTF-8 byte order mark (BOM) for Excel
+
+Excel opens a UTF-8 CSV without a BOM as Windows-1252, so `Industriegelände` shows as `IndustriegelÃ¤nde`.
+Other spreadsheet apps don't need it, so it's off by default. Turn it on to start written output with a BOM:
+
+```php
+$parser = new Parser();
+$parser->bom = true;
+
+// or via the static helpers
+Parser::write($data, 'output.csv', ['bom' => true]);
+Parser::writeStream($resource, $keys, $callback, ['bom' => true]);
+```
+
+All readers strip a leading BOM, whatever this setting is, so files saved from Excel (or written with `bom` on) read back cleanly.
+
 ## Writing CSV as a Stream
 
 The `writeStream` method allows you to write CSV data as a stream. This can be useful for writing large datasets efficiently.

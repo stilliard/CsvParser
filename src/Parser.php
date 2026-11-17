@@ -7,9 +7,16 @@ use CsvParser\Middleware\StringWriterMiddlewareInterface;
 
 class Parser
 {
+    // UTF-8 byte order mark
+    const BOM = "\xEF\xBB\xBF";
+
     public string $fieldDelimiter = ',';
     public string $fieldEnclosure = '"';
     public string $lineDelimiter = "\n";
+
+    // Start written output with a UTF-8 BOM, so Excel opens it as UTF-8 rather than Windows-1252.
+    // Readers always strip a leading BOM, regardless of this setting.
+    public bool $bom = false;
 
     // Middleware stacks
     public array $middleware = [];
@@ -52,11 +59,13 @@ class Parser
     protected static function instanceFromOptions(?array $options = null)
     {
         $options = $options ?? [];
-        return new static(
+        $parser = new static(
             $options['fieldDelimiter'] ?? null,
             $options['fieldEnclosure'] ?? null,
             $options['lineDelimiter'] ?? null
         );
+        $parser->bom = $options['bom'] ?? false;
+        return $parser;
     }
 
     /* Writers */
@@ -86,6 +95,11 @@ class Parser
     public function toStream($resource, $keys, $callback)
     {
         return Writer\StreamWriter::write($this, $resource, $keys, $callback);
+    }
+
+    public static function stripBom(string $string): string
+    {
+        return strncmp($string, self::BOM, 3) === 0 ? substr($string, 3) : $string;
     }
 
     /* Static helpers */

@@ -30,7 +30,7 @@ class StringWriter implements WriterInterface
                 }, $line));
             }
 
-            return implode($parser->lineDelimiter, $output);
+            return ($parser->bom ? $parser::BOM : '') . implode($parser->lineDelimiter, $output);
         } else {
             return '';
         }
