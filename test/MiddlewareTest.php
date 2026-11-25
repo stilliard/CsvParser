@@ -258,6 +258,8 @@ CSV;
             $results[] = $row;
         }
         $this->assertSame($orig, $results);
+
+        unlink($tempFile);
     }
 
     public function testTrimFieldMiddleware()
