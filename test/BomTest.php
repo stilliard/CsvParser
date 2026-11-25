@@ -11,11 +11,21 @@ class BomTest extends \PHPUnit_Framework_TestCase
         ['ID' => '1', 'Name' => 'Industriegelände 1'],
     ];
 
-    private function tmpFile(string $contents): string
+    private array $tmpFiles = [];
+
+    private function tmpFile(string $contents = ''): string
     {
         $file = tempnam(sys_get_temp_dir(), 'csv');
         file_put_contents($file, $contents);
+        $this->tmpFiles[] = $file;
         return $file;
+    }
+
+    public function tearDown(): void
+    {
+        foreach ($this->tmpFiles as $file) {
+            @unlink($file);
+        }
     }
 
     public function testStreamReaderSkipsBomBeforeQuotedHeading()
@@ -67,7 +77,7 @@ class BomTest extends \PHPUnit_Framework_TestCase
 
     public function testWriteWithBomOption()
     {
-        $file = tempnam(sys_get_temp_dir(), 'csv');
+        $file = $this->tmpFile();
         Parser::write([['ID' => 1]], $file, ['bom' => true]);
         $this->assertStringStartsWith(Parser::BOM . '"ID"', file_get_contents($file));
     }
@@ -90,7 +100,7 @@ class BomTest extends \PHPUnit_Framework_TestCase
 
     public function testRoundTripWithBom()
     {
-        $file = tempnam(sys_get_temp_dir(), 'csv');
+        $file = $this->tmpFile();
         Parser::write($this->expected, $file, ['bom' => true]);
         $this->assertEquals($this->expected, iterator_to_array(Parser::stream($file)));
     }
