@@ -13,11 +13,16 @@ class StreamReader implements ReaderInterface
         if ($handle === false) {
             throw new Exception("Could not open file: $file");
         }
+        // skip a UTF-8 BOM (Excel adds one) before parsing, or fgetcsv returns a quoted first heading with literal quotes
+        if (stream_get_meta_data($handle)['seekable'] && fread($handle, 3) !== Parser::BOM) {
+            rewind($handle);
+        }
+
         $headings = fgetcsv($handle, 0, $parser->fieldDelimiter, $parser->fieldEnclosure);
 
-        // handle removing BOM if present
+        // fallback for non-seekable streams, works for unquoted headings only
         if ($headings && isset($headings[0])) {
-            $headings[0] = preg_replace('/^\xEF\xBB\xBF/', '', $headings[0]); // remove UTF-8 BOM
+            $headings[0] = Parser::stripBom($headings[0]);
         }
 
         $index = 0;
