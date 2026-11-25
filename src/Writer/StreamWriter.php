@@ -19,7 +19,7 @@ class StreamWriter
             fwrite($resource, $parser->fieldEnclosure . implode($parser->fieldEnclosure . $parser->fieldDelimiter . $parser->fieldEnclosure, array_map($escape, $row)) . $parser->fieldEnclosure . $parser->lineDelimiter);
 
         if ($parser->bom) {
-            fwrite($resource, $parser::BOM);
+            fwrite($resource, Parser::BOM);
         }
 
         // Write header

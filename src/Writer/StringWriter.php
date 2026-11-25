@@ -30,7 +30,7 @@ class StringWriter implements WriterInterface
                 }, $line));
             }
 
-            return ($parser->bom ? $parser::BOM : '') . implode($parser->lineDelimiter, $output);
+            return ($parser->bom ? \CsvParser\Parser::BOM : '') . implode($parser->lineDelimiter, $output);
         } else {
             return '';
         }
